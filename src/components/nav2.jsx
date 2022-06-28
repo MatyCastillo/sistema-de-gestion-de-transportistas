@@ -18,6 +18,7 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import { deepOrange } from "@mui/material/colors";
 import AddIcon from "@mui/icons-material/Add";
+import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Button,
   Dialog,
@@ -27,7 +28,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IncriptionForm from "./inscriptionForm";
-
+import Tooltip from "@mui/material/Tooltip";
 const drawerWidth = 240;
 
 const theme2 = createTheme({
@@ -151,19 +152,22 @@ export default function NavBar(props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Formulario de Transportistas
+              Sistema interno UTEAM
             </Typography>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handleClickOpenModal}
-              startIcon={<AddIcon />}
-            >
-              {!isMobile ? `Cargar nueva inscripción` : `Cargar`}
-            </Button>
+            <Tooltip title="Salir">
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                color="inherit"
+              >
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
             <Dialog open={openModal} onClose={handleCloseModal} scroll="body">
               <DialogTitle id="scroll-dialog-title">
-                Formulario de Transportistas
+                Sistema interno UTEAM
               </DialogTitle>
               <DialogContent>
                 <IconButton
@@ -210,7 +214,7 @@ export default function NavBar(props) {
                   <AddIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Crear viaje"
+                  primary="Añadir proveedor"
                   sx={{ opacity: openSideBar ? 1 : 0 }}
                 />
               </ListItemButton>
@@ -245,7 +249,7 @@ export default function NavBar(props) {
             ))}
           </List>
         </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box component="main" sx={{ flexGrow: 1, pt: 8 }}>
           {props.children}
         </Box>
       </Box>

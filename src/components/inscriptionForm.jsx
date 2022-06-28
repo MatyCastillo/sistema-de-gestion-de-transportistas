@@ -51,7 +51,6 @@ export default function IncriptionForm() {
   const [datePickerValue, setDatePickerValue] = useState(null);
   const [timePickerValue, setTimePickerValue] = useState(null);
   const [helper, setHelper] = useState("");
-
   const [nombreFocused, setNombreFocused] = useState(false);
   const [direccFocus, setDireccFocus] = useState(false);
   const [localidadFocus, setLocalidadFocus] = useState(false);
@@ -62,11 +61,10 @@ export default function IncriptionForm() {
   const [tansportFocus, setTansportFocus] = useState(false);
   const [dateFocus, setDateFocus] = useState(false);
   const [timeFocus, setTimeFocus] = useState(false);
-
   const [data, setData] = useState(dataPre);
-
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
+
   const handleOpenDialog = () => {
     setOpenDialog(true);
   };
@@ -88,7 +86,6 @@ export default function IncriptionForm() {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (data.nombreColegio == null || "") {
       setNombreFocused(true);
     } else if (data.direccColegio == null || "") {
