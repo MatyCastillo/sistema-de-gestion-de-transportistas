@@ -20,7 +20,7 @@ import SendIcon from "@mui/icons-material/Send";
 import esLocale from "date-fns/locale/es";
 import format from "date-fns/format";
 import AlertDialog from "./alertDialog";
-import { createNewInscription } from "../functions";
+import { createNewInscription } from "../services";
 import { useNavigate } from "react-router-dom";
 
 const theme = createTheme({

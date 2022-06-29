@@ -29,6 +29,8 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import IncriptionForm from "./inscriptionForm";
 import Tooltip from "@mui/material/Tooltip";
+import useUser from "../hooks/useUser";
+
 const drawerWidth = 240;
 
 const theme2 = createTheme({
@@ -99,6 +101,7 @@ const Drawer = styled(MuiDrawer, {
 const isMobile = window.innerWidth <= 500;
 
 export default function NavBar(props) {
+  const { logout } = useUser();
   const [openSideBar, setOpenSideBar] = React.useState(
     !isMobile ? true : false
   );
@@ -161,6 +164,7 @@ export default function NavBar(props) {
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
                 color="inherit"
+                onClick={logout}
               >
                 <LogoutIcon />
               </IconButton>

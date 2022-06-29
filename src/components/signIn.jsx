@@ -13,7 +13,10 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import loginImg from "../img/logoUteam.jpg";
 import { deepOrange } from "@mui/material/colors";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Alert } from "@mui/material";
+import useUser from "../hooks/useUser";
+import { useEffect } from "react";
 
 const theme = createTheme({
   palette: {
@@ -25,16 +28,26 @@ const theme = createTheme({
 });
 
 export default function SignIn() {
+  const location = useLocation();
   const navigate = useNavigate();
+  const { login, isLogged } = useUser();
+
+  if (location.state !== null || "") {
+    console.log(location.state.message);
+  }
+
+  useEffect(() => {
+    if (isLogged) navigate("/loged", { replace: false });
+  }, [isLogged, navigate]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    login({ nombre, password });
     const data = new FormData(event.currentTarget);
     console.log({
       email: data.get("email"),
       password: data.get("password"),
     });
-    navigate("/loged", { replace: false });
   };
 
   return (
@@ -62,6 +75,11 @@ export default function SignIn() {
             noValidate
             sx={{ mt: 1 }}
           >
+            {location.state !== null || "" ? (
+              <Alert severity="error">{location.state.message}</Alert>
+            ) : (
+              <></>
+            )}
             <TextField
               margin="normal"
               required

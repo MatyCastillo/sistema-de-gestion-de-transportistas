@@ -3,7 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { DataGrid, esES } from "@mui/x-data-grid";
 import { Paper } from "@mui/material";
-import { getAllIncriptions } from "../functions";
+import { getAllIncriptions } from "../services";
 import { deepOrange } from "@mui/material/colors";
 import { esES as coreEsES } from "@mui/material/locale";
 
