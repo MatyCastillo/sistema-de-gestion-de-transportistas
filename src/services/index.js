@@ -20,4 +20,20 @@ const createNewInscription = async (data) => {
   }
 };
 
-export { getAllIncriptions, createNewInscription };
+const loginService = async ({ nombre, password }) => {
+  const data = {
+    nombre: nombre,
+    password: password,
+  };
+  try {
+    const response = await axios.post(
+      "http://localhost:8080/api/v1/auth/login",
+      data
+    );
+    return response.data.token;
+  } catch (error) {
+    return error;
+  }
+};
+
+export { getAllIncriptions, createNewInscription, loginService };

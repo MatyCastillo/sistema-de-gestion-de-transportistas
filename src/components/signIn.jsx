@@ -16,7 +16,7 @@ import { deepOrange } from "@mui/material/colors";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Alert } from "@mui/material";
 import useUser from "../hooks/useUser";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const theme = createTheme({
   palette: {
@@ -31,6 +31,8 @@ export default function SignIn() {
   const location = useLocation();
   const navigate = useNavigate();
   const { login, isLogged } = useUser();
+  const [nombre, setNombre] = useState("");
+  const [password, setPassword] = useState("");
 
   if (location.state !== null || "") {
     console.log(location.state.message);
@@ -44,10 +46,6 @@ export default function SignIn() {
     event.preventDefault();
     login({ nombre, password });
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
   };
 
   return (
@@ -89,6 +87,7 @@ export default function SignIn() {
               name="email"
               autoComplete="email"
               autoFocus
+              onChange={(e) => setNombre(e.target.value)}
             />
             <TextField
               margin="normal"
@@ -99,6 +98,7 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
+              onChange={(e) => setPassword(e.target.value)}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
