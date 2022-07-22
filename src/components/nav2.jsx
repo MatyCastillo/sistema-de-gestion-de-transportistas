@@ -30,6 +30,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import IncriptionForm from "./inscriptionForm";
 import Tooltip from "@mui/material/Tooltip";
 import useUser from "../hooks/useUser";
+import AssessmentIcon from "@mui/icons-material/Assessment";
+import QueryStatsIcon from "@mui/icons-material/QueryStats";
+import TabUnselectedIcon from "@mui/icons-material/TabUnselected";
 
 const drawerWidth = 240;
 
@@ -226,31 +229,75 @@ export default function NavBar(props) {
           </List>
           <Divider />
           <List>
-            {["Utilidad 1", "Utilidad 2"].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: "block" }}>
-                <ListItemButton
+            <ListItem key="reports" disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: openSideBar ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: openSideBar ? "initial" : "center",
-                    px: 2.5,
+                    minWidth: 0,
+                    mr: openSideBar ? 3 : "auto",
+                    justifyContent: "center",
                   }}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: openSideBar ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={text}
-                    sx={{ opacity: openSideBar ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            ))}
+                  <QueryStatsIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Reportes"
+                  sx={{ opacity: openSideBar ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key="stadistics" disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: openSideBar ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: openSideBar ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <AssessmentIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Estadísticas"
+                  sx={{ opacity: openSideBar ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem key="incomplete" disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: openSideBar ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: openSideBar ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <TabUnselectedIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Incompletos"
+                  sx={{ opacity: openSideBar ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, pt: 8 }}>

@@ -7,14 +7,7 @@ export default function useUser() {
 
   const login = useCallback(
     ({ nombre, password }) => {
-      loginService({ nombre, password })
-        .then((jwt) => {
-          console.log("token en useUser", jwt);
-          setJWT(jwt);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      setJWT(true);
     },
     [setJWT]
   );
