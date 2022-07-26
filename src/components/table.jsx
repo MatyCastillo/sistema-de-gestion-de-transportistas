@@ -1,11 +1,13 @@
 import * as React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import { DataGrid, esES } from "@mui/x-data-grid";
+import { DataGrid, esES, GridActionsCellItem } from "@mui/x-data-grid";
 import { Paper, styled, TableCell, tableCellClasses } from "@mui/material";
 import { getAllIncriptions } from "../services";
 import { deepOrange } from "@mui/material/colors";
 import { esES as coreEsES } from "@mui/material/locale";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 
 const theme = createTheme(
   {
@@ -29,6 +31,14 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     fontSize: 14,
   },
 }));
+
+const handleEditClick = (id) => () => {
+  console.log(id);
+};
+
+const handleDeleteClick = (id) => () => {
+  console.log(id);
+};
 
 const columns = [
   { field: "id", headerName: "#", width: 50 },
@@ -68,9 +78,28 @@ const columns = [
   { field: "chofer_cuitTitular", headerName: "CUIT Titular", width: 150 },
   { field: "chofer_anioMod", headerName: "Año Mod", width: 150 },
   {
-    field: "edit_delete",
-    headerName: "Editar/Borrar",
-    width: 150,
+    field: "actions",
+    type: "actions",
+    headerName: "Acciones",
+    width: 100,
+    cellClassName: "actions",
+    getActions: ({ id }) => {
+      return [
+        <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit"
+          className="textPrimary"
+          onClick={handleEditClick(id)}
+          color="success"
+        />,
+        <GridActionsCellItem
+          icon={<DeleteIcon />}
+          label="Delete"
+          onClick={handleDeleteClick(id)}
+          color="error"
+        />,
+      ];
+    },
   },
 ];
 
