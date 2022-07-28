@@ -27,7 +27,7 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import IncriptionForm from "./inscriptionForm";
+import IncriptionForm from "./inscriptionCarrierForm";
 import Tooltip from "@mui/material/Tooltip";
 import useUser from "../hooks/useUser";
 import AssessmentIcon from "@mui/icons-material/Assessment";
