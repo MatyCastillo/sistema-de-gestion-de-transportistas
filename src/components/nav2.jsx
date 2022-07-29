@@ -172,7 +172,12 @@ export default function NavBar(props) {
                 <LogoutIcon />
               </IconButton>
             </Tooltip>
-            <Dialog open={openModal} onClose={handleCloseModal} scroll="body">
+            <Dialog
+              open={openModal}
+              maxWidth="true"
+              onClose={handleCloseModal}
+              scroll="body"
+            >
               <DialogTitle id="scroll-dialog-title">
                 Sistema interno UTEAM
               </DialogTitle>

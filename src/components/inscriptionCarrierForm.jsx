@@ -22,6 +22,7 @@ import format from "date-fns/format";
 import AlertDialog from "./alertDialog";
 import { createNewInscription } from "../services";
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
 
 const theme = createTheme({
   palette: {
@@ -47,7 +48,7 @@ export default function IncriptionForm() {
     dateViaje: null,
     timeViaje: null,
   };
-
+  const [errorMessage, setErrorMessage] = React.useState("");
   const [datePickerValue, setDatePickerValue] = useState(null);
   const [timePickerValue, setTimePickerValue] = useState(null);
   const [helper, setHelper] = useState("");
@@ -143,9 +144,11 @@ export default function IncriptionForm() {
     });
   };
 
+  const textInput = useRef(null);
+
   return (
     <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xl">
         <AlertDialog
           open={OpenDialog}
           close={handleCloseDialog}
@@ -163,9 +166,6 @@ export default function IncriptionForm() {
           {/* <Typography component="h1" variant="h5">
             Formulario de inscripción
           </Typography> */}
-          <Typography component="h3" variant="h6">
-            Ingrese los datos del colegio
-          </Typography>
           <Box
             component="form"
             noValidate
@@ -173,68 +173,147 @@ export default function IncriptionForm() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
+                <Typography component="h3" variant="h6">
+                  Datos del proveedor
+                </Typography>
+                {/* <Button
+                  onClick={() => {
+                    textInput.current.focus(); //para hace focus en el area de texto
+                    setErrorMessage("Campo obligatorio.");
+                    setTimeout(() => {
+                      setErrorMessage("");
+                    }, 1500);
+                  }}
+                >
+                  Focus TextField
+                </Button> 
+                <br />*/}
                 <TextField
+                  error={setErrorMessage === ""}
+                  margin="normal"
+                  onChange={handleInputChange}
+                  required
+                  inputRef={textInput}
+                  id="nombreColegio"
+                  name="nombreColegio"
+                  label="Nº Asociado"
+                  variant="standard"
+                  helperText={errorMessage}
+                  size="small"
+                />
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  onChange={handleInputChange}
+                  required
+                  helperText={helper}
+                  fullWidth
+                  id="nombreColegio"
+                  name="nombreColegio"
+                  label="Nombre y apellido"
+                  size="small"
+                />
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  onChange={handleInputChange}
+                  required
+                  helperText={helper}
+                  fullWidth
+                  id="nombreColegio"
+                  name="nombreColegio"
+                  label="DNI"
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <Typography component="h3" variant="h6">
+                  Datos del Chofer
+                </Typography>
+                <TextField
+                  margin="normal"
                   onChange={handleInputChange}
                   required
                   focused={nombreFocused}
                   helperText={helper}
                   fullWidth
                   id="nombreColegio"
-                  label="Nombre del colegio"
                   name="nombreColegio"
-                  autoFocus
+                  label="Nombre y apellido"
+                  size="small"
                 />
+                <Grid item xs={12}>
+                  <TextField
+                    margin="normal"
+                    onChange={handleInputChange}
+                    required
+                    fullWidth
+                    focused={direccFocus}
+                    id="direccColegio"
+                    name="direccColegio"
+                    label="DNI"
+                    autoComplete="street-address"
+                    size="small"
+                  />
+                </Grid>
               </Grid>
               <Grid item xs={12}>
+                <Typography component="h3" variant="h6">
+                  Datos del vehiculo
+                </Typography>
                 <TextField
                   onChange={handleInputChange}
                   required
                   fullWidth
                   focused={direccFocus}
                   id="direccColegio"
-                  label="Dirección del colegio"
                   name="direccColegio"
+                  label="Titular del vehiculo"
                   autoComplete="street-address"
+                  size="small"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   onChange={handleInputChange}
                   required
                   fullWidth
                   focused={localidadFocus}
                   id="localidadColegio"
-                  label="Localidad"
                   name="localidadColegio"
+                  label="Vehiculo"
                   autoComplete="address-level1"
+                  size="small"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={6}>
                 <TextField
                   onChange={handleInputChange}
                   required
                   fullWidth
                   focused={emailFocus}
                   id="emailColegio"
-                  label="Email del colegio"
-                  name="emailColegio"
+                  label="Patente"
+                  name="patente"
                   autoComplete="email"
+                  size="small"
                 />
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={4}>
                 <TextField
                   onChange={handleInputChange}
                   required
                   fullWidth
                   focused={telFocus}
                   id="telColegio"
-                  label="Teléfono del colegio"
                   name="telColegio"
+                  label="Cia de seguro"
                   autoComplete="tel"
+                  size="small"
                 />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   onChange={handleInputChange}
                   name="nombreDirectivo"
@@ -242,7 +321,20 @@ export default function IncriptionForm() {
                   fullWidth
                   focused={nombreDFocus}
                   id="nombreDirectivo"
-                  label="Nombre Directivo"
+                  label="Nº poliza"
+                  autoComplete="given-name"
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  onChange={handleInputChange}
+                  name="nombreDirectivo"
+                  required
+                  fullWidth
+                  focused={nombreDFocus}
+                  id="nombreDirectivo"
+                  label="Vto poliza"
                   autoComplete="given-name"
                 />
               </Grid>
@@ -253,8 +345,56 @@ export default function IncriptionForm() {
                   fullWidth
                   focused={apellidoDFocus}
                   id="apellidoDirectivo"
-                  label="Apellido Directivo"
                   name="apellidoDirectivo"
+                  label="Habilitación municipal"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  onChange={handleInputChange}
+                  required
+                  fullWidth
+                  focused={apellidoDFocus}
+                  id="apellidoDirectivo"
+                  name="apellidoDirectivo"
+                  label="Vto habilitación"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  onChange={handleInputChange}
+                  required
+                  fullWidth
+                  focused={apellidoDFocus}
+                  id="apellidoDirectivo"
+                  name="apellidoDirectivo"
+                  label="Certificado Técnico / VTV"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  onChange={handleInputChange}
+                  required
+                  fullWidth
+                  focused={apellidoDFocus}
+                  id="apellidoDirectivo"
+                  name="apellidoDirectivo"
+                  label="Vto VTV"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  onChange={handleInputChange}
+                  required
+                  fullWidth
+                  focused={apellidoDFocus}
+                  id="apellidoDirectivo"
+                  name="apellidoDirectivo"
+                  label="Capacidad"
                   autoComplete="family-name"
                 />
               </Grid>
