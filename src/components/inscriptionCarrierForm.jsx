@@ -173,7 +173,7 @@ export default function IncriptionForm() {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              <Grid item xs={6}>
+              <Grid item xs={12} lg={6}>
                 <Typography component="h3" variant="h6">
                   Datos del proveedor
                 </Typography>
@@ -198,8 +198,8 @@ export default function IncriptionForm() {
                   id="nombreColegio"
                   name="nombreColegio"
                   label="Nº Asociado"
-                  variant="standard"
                   helperText={errorMessage}
+                  variant="standard"
                   size="small"
                 />
                 <TextField
@@ -226,16 +226,28 @@ export default function IncriptionForm() {
                   label="DNI"
                   size="small"
                 />
+                <TextField
+                  variant="standard"
+                  margin="normal"
+                  onChange={handleInputChange}
+                  required
+                  helperText={helper}
+                  fullWidth
+                  id="nombreColegio"
+                  name="nombreColegio"
+                  label="CUIT"
+                  size="small"
+                />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} lg={6}>
                 <Typography component="h3" variant="h6">
                   Datos del Chofer
                 </Typography>
                 <TextField
+                  variant="standard"
                   margin="normal"
                   onChange={handleInputChange}
                   required
-                  focused={nombreFocused}
                   helperText={helper}
                   fullWidth
                   id="nombreColegio"
@@ -245,15 +257,39 @@ export default function IncriptionForm() {
                 />
                 <Grid item xs={12}>
                   <TextField
+                    variant="standard"
                     margin="normal"
                     onChange={handleInputChange}
                     required
                     fullWidth
-                    focused={direccFocus}
                     id="direccColegio"
                     name="direccColegio"
                     label="DNI"
                     autoComplete="street-address"
+                    size="small"
+                  />
+                  <TextField
+                    variant="standard"
+                    margin="normal"
+                    onChange={handleInputChange}
+                    required
+                    helperText={helper}
+                    fullWidth
+                    id="nombreColegio"
+                    name="nombreColegio"
+                    label="CUIT"
+                    size="small"
+                  />
+                  <TextField
+                    variant="standard"
+                    margin="normal"
+                    onChange={handleInputChange}
+                    required
+                    helperText={helper}
+                    fullWidth
+                    id="nombreColegio"
+                    name="nombreColegio"
+                    label="Vto Reg"
                     size="small"
                   />
                 </Grid>
@@ -263,10 +299,10 @@ export default function IncriptionForm() {
                   Datos del vehiculo
                 </Typography>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={direccFocus}
                   id="direccColegio"
                   name="direccColegio"
                   label="Titular del vehiculo"
@@ -274,25 +310,25 @@ export default function IncriptionForm() {
                   size="small"
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} lg={4}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={localidadFocus}
                   id="localidadColegio"
                   name="localidadColegio"
-                  label="Vehiculo"
+                  label="Vehiculo(marca/modelo)"
                   autoComplete="address-level1"
                   size="small"
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12} lg={4}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={emailFocus}
                   id="emailColegio"
                   label="Patente"
                   name="patente"
@@ -300,26 +336,39 @@ export default function IncriptionForm() {
                   size="small"
                 />
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={12} lg={4}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={telFocus}
+                  id="localidadColegio"
+                  name="localidadColegio"
+                  label="Año"
+                  autoComplete="address-level1"
+                  size="small"
+                />
+              </Grid>
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  variant="standard"
+                  onChange={handleInputChange}
+                  required
+                  fullWidth
                   id="telColegio"
                   name="telColegio"
-                  label="Cia de seguro"
+                  label="Compañia de seguro"
                   autoComplete="tel"
                   size="small"
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   name="nombreDirectivo"
                   required
                   fullWidth
-                  focused={nombreDFocus}
                   id="nombreDirectivo"
                   label="Nº poliza"
                   autoComplete="given-name"
@@ -328,11 +377,11 @@ export default function IncriptionForm() {
               </Grid>
               <Grid item xs={12} sm={4}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   name="nombreDirectivo"
                   required
                   fullWidth
-                  focused={nombreDFocus}
                   id="nombreDirectivo"
                   label="Vto poliza"
                   autoComplete="given-name"
@@ -340,22 +389,22 @@ export default function IncriptionForm() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={apellidoDFocus}
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
-                  label="Habilitación municipal"
+                  label=" Nº habilitación municipal"
                   autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={apellidoDFocus}
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Vto habilitación"
@@ -364,22 +413,22 @@ export default function IncriptionForm() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={apellidoDFocus}
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
-                  label="Certificado Técnico / VTV"
+                  label="Nº certificado Técnico / VTV"
                   autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={apellidoDFocus}
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Vto VTV"
@@ -388,13 +437,25 @@ export default function IncriptionForm() {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  variant="standard"
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={apellidoDFocus}
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Capacidad"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="standard"
+                  onChange={handleInputChange}
+                  required
+                  fullWidth
+                  id="apellidoDirectivo"
+                  name="apellidoDirectivo"
+                  label="Vto cupón de pago"
                   autoComplete="family-name"
                 />
               </Grid>
@@ -416,7 +477,6 @@ export default function IncriptionForm() {
                   onChange={handleInputChange}
                   required
                   fullWidth
-                  focused={tansportFocus}
                   id="nombreTransportista"
                   label="Nombre y Apellido del transportista"
                   name="nombreTransportista"
