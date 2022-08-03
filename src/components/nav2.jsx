@@ -174,7 +174,7 @@ export default function NavBar(props) {
             </Tooltip>
             <Dialog
               open={openModal}
-              maxWidth="md"
+              maxWidth="lg"
               onClose={handleCloseModal}
               scroll="body"
             >

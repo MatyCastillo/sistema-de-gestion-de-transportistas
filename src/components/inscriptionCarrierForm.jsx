@@ -37,6 +37,8 @@ const theme = createTheme({
 export default function IncriptionForm() {
   let navigate = useNavigate();
 
+  var dniImg = noImg;
+
   const dataPre = {
     nombreTransportista: null,
     nombreColegio: null,
@@ -146,6 +148,30 @@ export default function IncriptionForm() {
   };
 
   const textInput = useRef(null);
+
+  function archivo(evt) {
+    var files = evt.target.files; // FileList object
+
+    // Obtenemos la imagen del campo "file".
+    for (var i = 0, f; (f = files[i]); i++) {
+      //Solo admitimos imágenes.
+      if (!f.type.match("image.*")) {
+        continue;
+      }
+
+      var reader = new FileReader();
+
+      reader.onload = (function (theFile) {
+        return function (e) {
+          dniImg = e.target.result;
+          console.log("result", e.target.result);
+          console.log("dniImg", dniImg);
+        };
+      })(f);
+
+      reader.readAsDataURL(f);
+    }
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -471,14 +497,22 @@ export default function IncriptionForm() {
                 <Grid>
                   <Tooltip title="Acá se mostrarán las imagenes cargadas">
                     <Avatar
+                      id="dniFront"
                       alt="no-photo"
-                      src={noImg}
+                      src={dniImg}
                       sx={{ width: 56, height: 56, m: 2, ml: 5 }}
                     />
                   </Tooltip>
                   <Button sx={{ m: 2, mt: -2 }} component="label">
                     DNI Frente
-                    <input hidden accept="image/*" multiple type="file" />
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={(e) => archivo(e)}
+                    />
                   </Button>
                 </Grid>
                 <Grid>
@@ -524,7 +558,7 @@ export default function IncriptionForm() {
                   <Tooltip title="Acá se mostrarán las imagenes cargadas">
                     <Avatar
                       alt="no-photo"
-                      src={noImg} 
+                      src={noImg}
                       sx={{ width: 56, height: 56, m: 2 }}
                     />
                   </Tooltip>
@@ -535,7 +569,7 @@ export default function IncriptionForm() {
                 </Grid>
               </Stack>
             </Grid>
-            <Grid container alignItems="center">
+            <Grid container justifyContent="flex-end">
               <Button
                 type="submit"
                 variant="contained"
