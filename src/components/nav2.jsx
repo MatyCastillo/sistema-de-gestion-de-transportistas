@@ -179,9 +179,9 @@ export default function NavBar(props) {
               scroll="body"
             >
               <DialogTitle id="scroll-dialog-title">
-                Sistema interno UTEAM
+                Formulario de alta
               </DialogTitle>
-              <DialogContent>
+              <DialogContent dividers>
                 <IconButton
                   aria-label="close"
                   onClick={handleCloseModal}

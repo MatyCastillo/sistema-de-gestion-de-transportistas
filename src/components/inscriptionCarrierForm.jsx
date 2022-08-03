@@ -16,14 +16,15 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import SendIcon from "@mui/icons-material/Send";
+import SaveIcon from "@mui/icons-material/Save";
 import esLocale from "date-fns/locale/es";
 import format from "date-fns/format";
 import AlertDialog from "./alertDialog";
 import { createNewInscription } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
-
+import noImg from "../img/no-photo.png";
+import Tooltip from "@mui/material/Tooltip";
 const theme = createTheme({
   palette: {
     primary: deepOrange,
@@ -265,7 +266,7 @@ export default function IncriptionForm() {
                     id="direccColegio"
                     name="direccColegio"
                     label="DNI"
-                    autoComplete="street-address"
+                    // autoComplete="street-address"
                     size="small"
                   />
                   <TextField
@@ -289,8 +290,9 @@ export default function IncriptionForm() {
                     fullWidth
                     id="nombreColegio"
                     name="nombreColegio"
-                    label="Vto Reg"
+                    label="Vto Registro"
                     size="small"
+                    placeholder="DD/MM/AAAA"
                   />
                 </Grid>
               </Grid>
@@ -306,11 +308,11 @@ export default function IncriptionForm() {
                   id="direccColegio"
                   name="direccColegio"
                   label="Titular del vehiculo"
-                  autoComplete="street-address"
+                  // autoComplete="street-address"
                   size="small"
                 />
               </Grid>
-              <Grid item xs={12} lg={4}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
                   onChange={handleInputChange}
@@ -319,11 +321,11 @@ export default function IncriptionForm() {
                   id="localidadColegio"
                   name="localidadColegio"
                   label="Vehiculo(marca/modelo)"
-                  autoComplete="address-level1"
+                  // autoComplete="address-level1"
                   size="small"
                 />
               </Grid>
-              <Grid item xs={12} lg={4}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
                   onChange={handleInputChange}
@@ -332,11 +334,11 @@ export default function IncriptionForm() {
                   id="emailColegio"
                   label="Patente"
                   name="patente"
-                  autoComplete="email"
+                  // autoComplete="email"
                   size="small"
                 />
               </Grid>
-              <Grid item xs={12} lg={4}>
+              <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
                   onChange={handleInputChange}
@@ -345,7 +347,7 @@ export default function IncriptionForm() {
                   id="localidadColegio"
                   name="localidadColegio"
                   label="Año"
-                  autoComplete="address-level1"
+                  // autoComplete="address-level1"
                   size="small"
                 />
               </Grid>
@@ -358,7 +360,7 @@ export default function IncriptionForm() {
                   id="telColegio"
                   name="telColegio"
                   label="Compañia de seguro"
-                  autoComplete="tel"
+                  // autoComplete="tel"
                   size="small"
                 />
               </Grid>
@@ -371,7 +373,7 @@ export default function IncriptionForm() {
                   fullWidth
                   id="nombreDirectivo"
                   label="Nº poliza"
-                  autoComplete="given-name"
+                  // autoComplete="given-name"
                   size="small"
                 />
               </Grid>
@@ -384,7 +386,7 @@ export default function IncriptionForm() {
                   fullWidth
                   id="nombreDirectivo"
                   label="Vto poliza"
-                  autoComplete="given-name"
+                  // autoComplete="given-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -396,7 +398,7 @@ export default function IncriptionForm() {
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label=" Nº habilitación municipal"
-                  autoComplete="family-name"
+                  // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -408,7 +410,7 @@ export default function IncriptionForm() {
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Vto habilitación"
-                  autoComplete="family-name"
+                  // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -420,7 +422,7 @@ export default function IncriptionForm() {
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Nº certificado Técnico / VTV"
-                  autoComplete="family-name"
+                  // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -432,7 +434,7 @@ export default function IncriptionForm() {
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Vto VTV"
-                  autoComplete="family-name"
+                  // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -444,7 +446,7 @@ export default function IncriptionForm() {
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Capacidad"
-                  autoComplete="family-name"
+                  // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
@@ -456,86 +458,94 @@ export default function IncriptionForm() {
                   id="apellidoDirectivo"
                   name="apellidoDirectivo"
                   label="Vto cupón de pago"
-                  autoComplete="family-name"
+                  // autoComplete="family-name"
                 />
-              </Grid>
-              <Typography
-                sx={{
-                  marginTop: 2,
-                  marginLeft: 5,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-                component="h5"
-                variant="h6"
-              >
-                Ingrese los datos del transportista
-              </Typography>
-              <Grid item xs={12}>
-                <TextField
-                  onChange={handleInputChange}
-                  required
-                  fullWidth
-                  id="nombreTransportista"
-                  label="Nombre y Apellido del transportista"
-                  name="nombreTransportista"
-                />
-              </Grid>
-              <br />
-              <Typography
-                sx={{
-                  marginTop: 2,
-                  marginLeft: 8,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-                component="h5"
-                variant="h6"
-              >
-                Ingrese los datos del viaje
-              </Typography>
-              <Grid item xs={12}>
-                <LocalizationProvider
-                  dateAdapter={AdapterDateFns}
-                  adapterLocale={esLocale}
-                >
-                  <Stack spacing={3}>
-                    <DatePicker
-                      focused={dateFocus}
-                      name="dateViaje"
-                      label="Fecha de salida"
-                      value={datePickerValue}
-                      onSubmit={handleInputChange}
-                      inputFormat="dd/MM/yyyy"
-                      onChange={(newValue) => dateOnChange(newValue)}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                    <TimePicker
-                      inputFormat="HH:mm"
-                      focused={timeFocus}
-                      ampm={false}
-                      name="timeViaje"
-                      label="Hora de salida"
-                      value={timePickerValue}
-                      onChange={(newValue) => timeOnChange(newValue)}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </Stack>
-                </LocalizationProvider>
               </Grid>
             </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-              endIcon={<SendIcon />}
-              onClick={handleSubmit}
-            >
-              Enviar formulario
-            </Button>
+
+            <Grid item xs={12} sx={{ mt: 3 }}>
+              <Typography component="h3" variant="h6">
+                Carga de imagenes
+              </Typography>
+              <Stack direction="row" spacing={2}>
+                <Grid>
+                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
+                    <Avatar
+                      alt="no-photo"
+                      src={noImg}
+                      sx={{ width: 56, height: 56, m: 2, ml: 5 }}
+                    />
+                  </Tooltip>
+                  <Button sx={{ m: 2, mt: -2 }} component="label">
+                    DNI Frente
+                    <input hidden accept="image/*" multiple type="file" />
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
+                    <Avatar
+                      alt="no-photo"
+                      src={noImg}
+                      sx={{ width: 56, height: 56, m: 2, ml: 5 }}
+                    />
+                  </Tooltip>
+                  <Button sx={{ m: 2, mt: -2 }} component="label">
+                    DNI Dorso
+                    <input hidden accept="image/*" multiple type="file" />
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
+                    <Avatar
+                      alt="no-photo"
+                      src={noImg}
+                      sx={{ width: 56, height: 56, m: 2, ml: 5 }}
+                    />
+                  </Tooltip>
+                  <Button sx={{ m: 2, mt: -2 }} component="label">
+                    DNI Frente
+                    <input hidden accept="image/*" multiple type="file" />
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
+                    <Avatar
+                      alt="no-photo"
+                      src={noImg}
+                      sx={{ width: 56, height: 56, m: 2, ml: 3 }}
+                    />
+                  </Tooltip>
+                  <Button sx={{ m: 2, mt: -2 }} component="label">
+                    Seguro
+                    <input hidden accept="image/*" multiple type="file" />
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
+                    <Avatar
+                      alt="no-photo"
+                      src={noImg} 
+                      sx={{ width: 56, height: 56, m: 2 }}
+                    />
+                  </Tooltip>
+                  <Button sx={{ m: 2, mt: -2 }} component="label">
+                    Poliza
+                    <input hidden accept="image/*" multiple type="file" />
+                  </Button>
+                </Grid>
+              </Stack>
+            </Grid>
+            <Grid container alignItems="center">
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                endIcon={<SaveIcon />}
+                onClick={handleSubmit}
+              >
+                Guardar
+              </Button>
+            </Grid>
           </Box>
         </Box>
       </Container>
