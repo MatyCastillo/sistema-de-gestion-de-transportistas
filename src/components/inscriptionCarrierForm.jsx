@@ -37,8 +37,6 @@ const theme = createTheme({
 export default function IncriptionForm() {
   let navigate = useNavigate();
 
-  var dniImg = noImg;
-
   const dataPre = {
     nombreTransportista: null,
     nombreColegio: null,
@@ -68,6 +66,11 @@ export default function IncriptionForm() {
   const [data, setData] = useState(dataPre);
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
+  const [imgPreview,setImgPreview] = useState(noImg);
+
+  const handlePreview = (e) => {
+    setImgPreview(URL.createObjectURL(e.target.files[0]));
+  }
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -149,29 +152,6 @@ export default function IncriptionForm() {
 
   const textInput = useRef(null);
 
-  function archivo(evt) {
-    var files = evt.target.files; // FileList object
-
-    // Obtenemos la imagen del campo "file".
-    for (var i = 0, f; (f = files[i]); i++) {
-      //Solo admitimos imágenes.
-      if (!f.type.match("image.*")) {
-        continue;
-      }
-
-      var reader = new FileReader();
-
-      reader.onload = (function (theFile) {
-        return function (e) {
-          dniImg = e.target.result;
-          console.log("result", e.target.result);
-          console.log("dniImg", dniImg);
-        };
-      })(f);
-
-      reader.readAsDataURL(f);
-    }
-  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -496,10 +476,11 @@ export default function IncriptionForm() {
               <Stack direction="row" spacing={2}>
                 <Grid>
                   <Tooltip title="Acá se mostrarán las imagenes cargadas">
+                  {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/} 
                     <Avatar
                       id="dniFront"
                       alt="no-photo"
-                      src={dniImg}
+                      src={imgPreview}
                       sx={{ width: 56, height: 56, m: 2, ml: 5 }}
                     />
                   </Tooltip>
@@ -511,7 +492,7 @@ export default function IncriptionForm() {
                       accept="image/*"
                       multiple
                       type="file"
-                      onChange={(e) => archivo(e)}
+                      onChange={handlePreview}
                     />
                   </Button>
                 </Grid>
