@@ -25,6 +25,9 @@ import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import noImg from "../img/no-photo.png";
 import Tooltip from "@mui/material/Tooltip";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { IconButton } from "@mui/material";
+
 const theme = createTheme({
   palette: {
     primary: deepOrange,
@@ -66,11 +69,11 @@ export default function IncriptionForm() {
   const [data, setData] = useState(dataPre);
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
-  const [imgPreview,setImgPreview] = useState(noImg);
+  const [imgPreview, setImgPreview] = useState(noImg);
 
   const handlePreview = (e) => {
     setImgPreview(URL.createObjectURL(e.target.files[0]));
-  }
+  };
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -151,7 +154,6 @@ export default function IncriptionForm() {
   };
 
   const textInput = useRef(null);
-
 
   return (
     <ThemeProvider theme={theme}>
@@ -474,16 +476,25 @@ export default function IncriptionForm() {
                 Carga de imagenes
               </Typography>
               <Stack direction="row" spacing={2}>
-                <Grid>
-                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
-                  {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/} 
-                    <Avatar
-                      id="dniFront"
-                      alt="no-photo"
-                      src={imgPreview}
-                      sx={{ width: 56, height: 56, m: 2, ml: 5 }}
-                    />
-                  </Tooltip>
+                <Grid container direction="column">
+                  <IconButton
+                    aria-label="fingerprint"
+                    color="error"
+                    onClick={() => setImgPreview(noImg)}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={imgPreview}
+                    sx={{ width: 100, height: 100, m: 2 }}
+                  ></Avatar>
+
                   <Button sx={{ m: 2, mt: -2 }} component="label">
                     DNI Frente
                     <input
