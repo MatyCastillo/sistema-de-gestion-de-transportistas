@@ -36,4 +36,24 @@ const loginService = async ({ nombre, password }) => {
   }
 };
 
+const mover_imagen = () => {
+  var formData = new FormData();
+  formData.append("fotos", uri_fotos);
+  fetch("http://192.100.1.1:3000/multifoto", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
+    },
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.code == 1) {
+        console.log("se subio correctamente");
+      } else {
+        console.log("Hubo un error");
+      }
+    });
+};
 export { getAllIncriptions, createNewInscription, loginService };

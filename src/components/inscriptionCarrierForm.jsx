@@ -25,7 +25,7 @@ import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import noImg from "../img/no-photo.png";
 import Tooltip from "@mui/material/Tooltip";
-import CancelIcon from "@mui/icons-material/Cancel";
+import CancelIcon from "@mui/icons-material/CancelTwoTone";
 import { IconButton } from "@mui/material";
 
 const theme = createTheme({
@@ -69,10 +69,67 @@ export default function IncriptionForm() {
   const [data, setData] = useState(dataPre);
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
-  const [imgPreview, setImgPreview] = useState(noImg);
 
-  const handlePreview = (e) => {
-    setImgPreview(URL.createObjectURL(e.target.files[0]));
+  const [dniTitFPreview, setDniTitFImgPreview] = useState(noImg);
+  const [dniTitDPreview, setDniTitDImgPreview] = useState(noImg);
+  const [dniChofFPreview, setDniChofFImgPreview] = useState(noImg);
+  const [dniChofDPreview, setDniChofDImgPreview] = useState(noImg);
+  const [hab1Preview, setHab1Preview] = useState(noImg);
+  const [hab2Preview, setHab2Preview] = useState(noImg);
+  const [pol1Preview, setPol1Preview] = useState(noImg);
+  const [pol2Preview, setPol2Preview] = useState(noImg);
+  const [seg1Preview, setSeg1Preview] = useState(noImg);
+  const [seg2Preview, setSeg2Preview] = useState(noImg);
+  const [regTitFPreview, setRegTitFImgPreview] = useState(noImg);
+  const [regTitDPreview, setRegTitDImgPreview] = useState(noImg);
+  const [regChofFPreview, setRegChofFImgPreview] = useState(noImg);
+  const [regChofDPreview, setRegChofDImgPreview] = useState(noImg);
+  const [vtvPreview, setVtvPreview] = useState(noImg);
+
+  const handleDniTitFPreview = (e) => {
+    setDniTitFImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleDniTitDPreview = (e) => {
+    setDniTitDImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleDniChofFPreview = (e) => {
+    setDniChofFImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleDniChofDPreview = (e) => {
+    setDniChofDImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleHab1Preview = (e) => {
+    setHab1Preview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleHab2Preview = (e) => {
+    setHab2Preview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handlePol1Preview = (e) => {
+    setPol1Preview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handlePol2Preview = (e) => {
+    setPol2Preview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleSeg1Preview = (e) => {
+    setSeg1Preview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleSeg2Preview = (e) => {
+    setSeg2Preview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleRegTitFPreview = (e) => {
+    setRegTitFImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleRegTitDPreview = (e) => {
+    setRegTitDImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleRegChofFPreview = (e) => {
+    setRegChofFImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleRegChofDPreview = (e) => {
+    setRegChofDImgPreview(URL.createObjectURL(e.target.files[0]));
+  };
+  const handleVtvPreview = (e) => {
+    setVtvPreview(URL.createObjectURL(e.target.files[0]));
   };
 
   const handleOpenDialog = () => {
@@ -471,95 +528,636 @@ export default function IncriptionForm() {
               </Grid>
             </Grid>
 
-            <Grid item xs={12} sx={{ mt: 3 }}>
+            <Grid item sx={{ mt: 3 }}>
               <Typography component="h3" variant="h6">
                 Carga de imagenes
               </Typography>
-              <Stack direction="row" spacing={2}>
-                <Grid container direction="column">
+              <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                sx={{ mt: 1 }}
+              >
+                <Grid>
+                  {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
                   <IconButton
-                    aria-label="fingerprint"
+                    aria-label="clearImg"
                     color="error"
-                    onClick={() => setImgPreview(noImg)}
+                    onClick={() => setDniTitFImgPreview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
-                  {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
                   <Avatar
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={imgPreview}
-                    sx={{ width: 100, height: 100, m: 2 }}
+                    src={dniTitFPreview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   ></Avatar>
-
-                  <Button sx={{ m: 2, mt: -2 }} component="label">
-                    DNI Frente
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    DNI Titular Frente
                     <input
                       hidden
                       id="files"
                       accept="image/*"
                       multiple
                       type="file"
-                      onChange={handlePreview}
+                      onChange={handleDniTitFPreview}
                     />
                   </Button>
                 </Grid>
                 <Grid>
-                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
-                    <Avatar
-                      alt="no-photo"
-                      src={noImg}
-                      sx={{ width: 56, height: 56, m: 2, ml: 5 }}
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setDniTitDImgPreview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={dniTitDPreview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    DNI titular Dorso
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleDniTitDPreview}
                     />
-                  </Tooltip>
-                  <Button sx={{ m: 2, mt: -2 }} component="label">
-                    DNI Dorso
-                    <input hidden accept="image/*" multiple type="file" />
                   </Button>
                 </Grid>
                 <Grid>
-                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
-                    <Avatar
-                      alt="no-photo"
-                      src={noImg}
-                      sx={{ width: 56, height: 56, m: 2, ml: 5 }}
+                  {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setDniChofFImgPreview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={dniChofFPreview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    DNI Chofer Frente
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleDniChofFPreview}
                     />
-                  </Tooltip>
-                  <Button sx={{ m: 2, mt: -2 }} component="label">
-                    DNI Frente
-                    <input hidden accept="image/*" multiple type="file" />
                   </Button>
                 </Grid>
                 <Grid>
-                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
-                    <Avatar
-                      alt="no-photo"
-                      src={noImg}
-                      sx={{ width: 56, height: 56, m: 2, ml: 3 }}
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setDniChofDImgPreview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={dniChofDPreview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    DNI Chofer Dorso
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleDniChofDPreview}
                     />
-                  </Tooltip>
-                  <Button sx={{ m: 2, mt: -2 }} component="label">
-                    Seguro
-                    <input hidden accept="image/*" multiple type="file" />
                   </Button>
                 </Grid>
+                {/**Inicio habilitacion foto 1 */}
                 <Grid>
-                  <Tooltip title="Acá se mostrarán las imagenes cargadas">
-                    <Avatar
-                      alt="no-photo"
-                      src={noImg}
-                      sx={{ width: 56, height: 56, m: 2 }}
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setHab1Preview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={hab1Preview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    habilitación foto 1
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleHab1Preview}
                     />
-                  </Tooltip>
-                  <Button sx={{ m: 2, mt: -2 }} component="label">
-                    Poliza
-                    <input hidden accept="image/*" multiple type="file" />
                   </Button>
                 </Grid>
-              </Stack>
+                {/**Fin habilitacion foto 1 */}
+                {/**Inicio habilitacion foto 2 */}
+                <Grid>
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setHab2Preview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={hab2Preview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    habilitación foto 2
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleHab2Preview}
+                    />
+                  </Button>
+                </Grid>
+                {/**Fin habilitacion foto 2 */}
+                {/**Inicio poliza foto 1 */}
+                <Grid>
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setPol1Preview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={pol1Preview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    poliza foto 1
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handlePol1Preview}
+                    />
+                  </Button>
+                </Grid>
+                {/**Fin poliza foto 1 */}
+                {/**Inicio poliza foto 2 */}
+                <Grid>
+                  <IconButton
+                    aria-label="clearImg"
+                    color="error"
+                    onClick={() => setPol2Preview(noImg)}
+                    sx={{ zIndex: "tooltip" }}
+                  >
+                    <Tooltip title="Eliminar imagen">
+                      <CancelIcon />
+                    </Tooltip>
+                  </IconButton>
+                  <Avatar
+                    variant="rounded"
+                    id="dniFront"
+                    alt="no-photo"
+                    src={pol2Preview}
+                    sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  ></Avatar>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    poliza foto 2
+                    <input
+                      hidden
+                      id="files"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handlePol2Preview}
+                    />
+                  </Button>
+                </Grid>
+                {/**Fin poliza foto 2 */}
+              </Grid>
+            </Grid>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              spacing={2}
+            >
+              {/**Inicio seguro foto 1 */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setSeg1Preview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={seg1Preview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  seguro foto 1
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleSeg1Preview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin seguro foto 1 */}
+              {/**Inicio seguro foto 2 */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setSeg2Preview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={seg2Preview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  seguro foto 2
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleSeg2Preview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin seguro foto 2 */}
+              {/**Inicio registro titular foto 1 */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setRegTitFImgPreview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={regTitFPreview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  registro titular frente
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleRegTitFPreview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin registro titular foto 1 */}
+              {/**Inicio registro titular foto 2 */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setRegTitDImgPreview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={regTitDPreview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  registro titular dorso
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleRegTitDPreview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin registro titular foto 2 */}
+              {/**Inicio registro chofer foto 1 */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setRegChofFImgPreview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={regChofFPreview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  registro chofer frente
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleRegChofFPreview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin registro chofer foto 1 */}
+              {/**Inicio registro chofer foto 2 */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setRegChofDImgPreview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={regChofDPreview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  registro chofer dorso
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleRegChofDPreview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin registro chofer foto 2 */}
+              {/**Inicio foto vtv */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => setVtvPreview(noImg)}
+                  sx={{ zIndex: "tooltip" }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  variant="rounded"
+                  id="dniFront"
+                  alt="no-photo"
+                  src={vtvPreview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                ></Avatar>
+                <Button
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  component="label"
+                  variant="outlined"
+                >
+                  informe vtv
+                  <input
+                    hidden
+                    id="files"
+                    accept="image/*"
+                    multiple
+                    type="file"
+                    onChange={handleVtvPreview}
+                  />
+                </Button>
+              </Grid>
+              {/**Fin registro foto vtv */}
             </Grid>
             <Grid container justifyContent="flex-end">
               <Button
