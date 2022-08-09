@@ -36,16 +36,16 @@ const loginService = async ({ nombre, password }) => {
   }
 };
 
-const mover_imagen = () => {
-  var formData = new FormData();
+const uploadImage = (data) => {
+  var data = new FormData();
   formData.append("fotos", uri_fotos);
-  fetch("http://192.100.1.1:3000/multifoto", {
+  fetch("http://localhost:8080/api/v1/proveedores/image?img", {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "multipart/form-data",
     },
-    body: formData,
+    body: data,
   })
     .then((response) => response.json())
     .then((res) => {

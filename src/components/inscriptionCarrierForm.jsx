@@ -153,45 +153,46 @@ export default function IncriptionForm() {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (data.nombreColegio == null || "") {
-      setNombreFocused(true);
-    } else if (data.direccColegio == null || "") {
-      setDireccFocus(true);
-    } else if (data.localidadColegio == null || "") {
-      setLocalidadFocus(true);
-    } else if (data.emailColegio == null || "") {
-      setEmailFocus(true);
-    } else if (data.telColegio == null || "") {
-      setTelFocus(true);
-    } else if (data.nombreDirectivo == null || "") {
-      setNombreDFocus(true);
-    } else if (data.apellidoDirectivo == null || "") {
-      setApellidoDFocus(true);
-    } else if (data.nombreTransportista == null || "") {
-      setTansportFocus(true);
-    } else if (data.dateViaje == null || "") {
-      setDateFocus(true);
-    } else if (data.timeViaje == null || "") {
-      setTimeFocus(true);
-    } else {
-      try {
-        const res = await createNewInscription(data);
-        if (res.data.status === "success") {
-          setContentDialog("success");
-          handleOpenDialog();
-          setTimeout(handleCloseDialog, 1000);
-          setTimeout(reload, 1000);
-        } else {
-          setContentDialog("error");
-          handleOpenDialog();
-          setTimeout(handleCloseDialog, 2000);
-        }
-      } catch {
-        setContentDialog("error");
-        handleOpenDialog();
-        setTimeout(handleCloseDialog, 2000);
-      }
+    // if (data.nombreColegio == null || "") {
+    //   setNombreFocused(true);
+    // } else if (data.direccColegio == null || "") {
+    //   setDireccFocus(true);
+    // } else if (data.localidadColegio == null || "") {
+    //   setLocalidadFocus(true);
+    // } else if (data.emailColegio == null || "") {
+    //   setEmailFocus(true);
+    // } else if (data.telColegio == null || "") {
+    //   setTelFocus(true);
+    // } else if (data.nombreDirectivo == null || "") {
+    //   setNombreDFocus(true);
+    // } else if (data.apellidoDirectivo == null || "") {
+    //   setApellidoDFocus(true);
+    // } else if (data.nombreTransportista == null || "") {
+    //   setTansportFocus(true);
+    // } else if (data.dateViaje == null || "") {
+    //   setDateFocus(true);
+    // } else if (data.timeViaje == null || "") {
+    //   setTimeFocus(true);
+    // } else {
+    try {
+      console.log(data);
+      // const res = await createNewInscription(data);
+      // if (res.data.status === "success") {
+      //   setContentDialog("success");
+      //   handleOpenDialog();
+      //   setTimeout(handleCloseDialog, 1000);
+      //   setTimeout(reload, 1000);
+      // } else {
+      //   setContentDialog("error");
+      //   handleOpenDialog();
+      //   setTimeout(handleCloseDialog, 2000);
+      // }
+    } catch {
+      setContentDialog("error");
+      handleOpenDialog();
+      setTimeout(handleCloseDialog, 2000);
     }
+    // }
   };
 
   const dateOnChange = (newValue) => {
@@ -554,7 +555,7 @@ export default function IncriptionForm() {
                   </IconButton>
                   <Avatar
                     variant="rounded"
-                    id="dniFront"
+                    id="dniTitF"
                     alt="no-photo"
                     src={dniTitFPreview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
