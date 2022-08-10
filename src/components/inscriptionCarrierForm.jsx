@@ -67,6 +67,7 @@ export default function IncriptionForm() {
   const [dateFocus, setDateFocus] = useState(false);
   const [timeFocus, setTimeFocus] = useState(false);
   const [data, setData] = useState(dataPre);
+  const [imgData, setImgData] = useState({});
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
 
@@ -88,6 +89,12 @@ export default function IncriptionForm() {
 
   const handleDniTitFPreview = (e) => {
     setDniTitFImgPreview(URL.createObjectURL(e.target.files[0]));
+    setImgData({
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("nAsos").value,
+    });
+    console.log(document.getElementById("nAsos").value);
   };
   const handleDniTitDPreview = (e) => {
     setDniTitDImgPreview(URL.createObjectURL(e.target.files[0]));
@@ -175,7 +182,7 @@ export default function IncriptionForm() {
     //   setTimeFocus(true);
     // } else {
     try {
-      console.log(data);
+      console.log(imgData);
       // const res = await createNewInscription(data);
       // if (res.data.status === "success") {
       //   setContentDialog("success");
@@ -262,8 +269,8 @@ export default function IncriptionForm() {
                   onChange={handleInputChange}
                   required
                   inputRef={textInput}
-                  id="nombreColegio"
-                  name="nombreColegio"
+                  id="nAsos"
+                  name="nAsos"
                   label="Nº Asociado"
                   helperText={errorMessage}
                   variant="standard"
@@ -554,6 +561,7 @@ export default function IncriptionForm() {
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onChange={handleInputChange}
                     variant="rounded"
                     id="dniTitF"
                     alt="no-photo"
@@ -573,7 +581,8 @@ export default function IncriptionForm() {
                     DNI Titular Frente
                     <input
                       hidden
-                      id="files"
+                      id="dniTitF"
+                      name="dniTitF"
                       accept="image/*"
                       multiple
                       type="file"
@@ -674,6 +683,7 @@ export default function IncriptionForm() {
                   <Avatar
                     variant="rounded"
                     id="dniFront"
+                    name="dniFront"
                     alt="no-photo"
                     src={dniChofDPreview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
