@@ -50,10 +50,28 @@ const loginService = async ({ nombre, password }) => {
 //     });
 // };
 
-const uploadImage = async (name, id, file) => {
+const uploadImage = async (file, name, id) => {
   const form = new FormData();
-  form.append("img_nombre", name);
-  form.append("prov_id", name);
+  form.append("img_nombre", "name");
+  form.append("prov_id", "23");
   form.append("img", file);
+  console.log(form);
+  try {
+    const resp = await axios.post(
+      `${API.URI}/api/v1/proveedores/image?img/`,
+      form,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log("resp", resp);
+    return resp;
+  } catch (err) {
+    // Handle Error Here
+    console.log("error up", err);
+    return err;
+  }
 };
-export { getAllIncriptions, createNewInscription, loginService };
+export { getAllIncriptions, createNewInscription, loginService, uploadImage };

@@ -20,7 +20,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import esLocale from "date-fns/locale/es";
 import format from "date-fns/format";
 import AlertDialog from "./alertDialog";
-import { createNewInscription } from "../services";
+import { createNewInscription, uploadImage } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import noImg from "../img/no-photo.png";
@@ -182,7 +182,12 @@ export default function IncriptionForm() {
     //   setTimeFocus(true);
     // } else {
     try {
-      console.log(imgData);
+      const resImg = await uploadImage(
+        imgData.img,
+        imgData.img_nombre,
+        imgData.prov_id
+      );
+      console.log(resImg);
       // const res = await createNewInscription(data);
       // if (res.data.status === "success") {
       //   setContentDialog("success");
@@ -194,7 +199,8 @@ export default function IncriptionForm() {
       //   handleOpenDialog();
       //   setTimeout(handleCloseDialog, 2000);
       // }
-    } catch {
+    } catch (e) {
+      console.log("error handle", e);
       setContentDialog("error");
       handleOpenDialog();
       setTimeout(handleCloseDialog, 2000);
