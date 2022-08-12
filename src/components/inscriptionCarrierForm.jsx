@@ -27,6 +27,7 @@ import noImg from "../img/no-photo.png";
 import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/CancelTwoTone";
 import { IconButton } from "@mui/material";
+import ImageForm from "./imageForm";
 
 const theme = createTheme({
   palette: {
@@ -67,7 +68,7 @@ export default function IncriptionForm() {
   const [dateFocus, setDateFocus] = useState(false);
   const [timeFocus, setTimeFocus] = useState(false);
   const [data, setData] = useState(dataPre);
-  const [imgData, setImgData] = useState({});
+  const [imgData, setImgData] = useState({ preview: noImg });
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
 
@@ -88,8 +89,8 @@ export default function IncriptionForm() {
   const [vtvPreview, setVtvPreview] = useState(noImg);
 
   const handleDniTitFPreview = (e) => {
-    setDniTitFImgPreview(URL.createObjectURL(e.target.files[0]));
     setImgData({
+      preview: URL.createObjectURL(e.target.files[0]),
       img: e.target.files[0],
       img_nombre: e.target.name,
       prov_id: document.getElementById("nAsos").value,
@@ -182,6 +183,7 @@ export default function IncriptionForm() {
     //   setTimeFocus(true);
     // } else {
     try {
+      console.log(imgData.prov_id);
       const resImg = await uploadImage(
         imgData.img,
         imgData.img_nombre,
@@ -554,12 +556,13 @@ export default function IncriptionForm() {
                 spacing={2}
                 sx={{ mt: 1 }}
               >
+                {/*<ImageForm title="Nuevo" />*/}
                 <Grid>
                   {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniTitFImgPreview(noImg)}
+                    onClick={() => setImgData({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -571,8 +574,11 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniTitF"
                     alt="no-photo"
-                    src={dniTitFPreview}
+                    src={imgData.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -613,6 +619,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={dniTitDPreview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -653,6 +662,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={dniChofFPreview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -693,6 +705,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={dniChofDPreview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -733,6 +748,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={hab1Preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -774,6 +792,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={hab2Preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -815,6 +836,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={pol1Preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -856,6 +880,9 @@ export default function IncriptionForm() {
                     alt="no-photo"
                     src={pol2Preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                    style={{
+                      border: "0.1px solid  #E7441060",
+                    }}
                   ></Avatar>
                   <Button
                     sx={{
@@ -906,6 +933,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={seg1Preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
@@ -947,6 +977,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={seg2Preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
@@ -988,6 +1021,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={regTitFPreview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
@@ -1029,6 +1065,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={regTitDPreview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
@@ -1070,6 +1109,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={regChofFPreview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
@@ -1111,6 +1153,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={regChofDPreview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
@@ -1152,6 +1197,9 @@ export default function IncriptionForm() {
                   alt="no-photo"
                   src={vtvPreview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
                 ></Avatar>
                 <Button
                   sx={{
