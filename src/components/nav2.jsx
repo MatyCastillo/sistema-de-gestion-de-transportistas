@@ -204,7 +204,7 @@ export default function NavBar(props) {
           <List>
             <ListItem
               onClick={handleClickOpenModal}
-              key="mail"
+              key="form"
               disablePadding
               sx={{ display: "block" }}
               selected
@@ -236,6 +236,7 @@ export default function NavBar(props) {
           <List>
             <ListItem key="reports" disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                disabled
                 sx={{
                   minHeight: 48,
                   justifyContent: openSideBar ? "initial" : "center",
@@ -259,6 +260,7 @@ export default function NavBar(props) {
             </ListItem>
             <ListItem key="stadistics" disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                disabled
                 sx={{
                   minHeight: 48,
                   justifyContent: openSideBar ? "initial" : "center",
@@ -282,6 +284,7 @@ export default function NavBar(props) {
             </ListItem>
             <ListItem key="incomplete" disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                disabled
                 sx={{
                   minHeight: 48,
                   justifyContent: openSideBar ? "initial" : "center",

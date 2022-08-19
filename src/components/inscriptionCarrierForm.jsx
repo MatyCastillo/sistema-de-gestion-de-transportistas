@@ -20,7 +20,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import esLocale from "date-fns/locale/es";
 import format from "date-fns/format";
 import AlertDialog from "./alertDialog";
-import { createNewInscription, uploadImage } from "../services";
+import { createNewProv, uploadImage, getProvById } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import noImg from "../img/no-photo.png";
@@ -28,6 +28,7 @@ import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/CancelTwoTone";
 import { IconButton } from "@mui/material";
 import ImageForm from "./imageForm";
+import { useEffect } from "react";
 
 const theme = createTheme({
   palette: {
@@ -38,106 +39,218 @@ const theme = createTheme({
   },
 });
 
-export default function IncriptionForm() {
+export default function IncriptionForm(props) {
   let navigate = useNavigate();
 
-  const dataPre = {
-    nombreTransportista: null,
-    nombreColegio: null,
-    direccColegio: null,
-    localidadColegio: null,
-    emailColegio: null,
-    telColegio: null,
-    nombreDirectivo: null,
-    apellidoDirectivo: null,
-    dateViaje: null,
-    timeViaje: null,
-  };
-  const [errorMessage, setErrorMessage] = React.useState("");
-  const [datePickerValue, setDatePickerValue] = useState(null);
+  const [edit, setEdit] = useState();
+
+  useEffect(() => {
+    (async () => {
+      if (props.id !== undefined) {
+        const res = await getProvById(props.id);
+        if (res) {
+          setEdit(res[0]);
+          setProv_asoc(res[0].prov_asoc);
+          setProv_nombre(res[0].prov_nombre);
+          setProv_dni(res[0].prov_dni);
+          setChofer_cuitTitular(res[0].chofer_cuitTitular);
+          setChofer(res[0].chofer);
+          setChofer_dni(res[0].chofer_dni);
+          setChofer_cuitSocio(res[0].chofer_cuitSocio);
+          setProv_titularVehiculo(res[0].prov_titularVehiculo);
+          setChofer_vehiculo(res[0].chofer_vehiculo);
+          setChofer_patente(res[0].chofer_patente);
+          setChofer_anioMod(res[0].chofer_anioMod);
+          setChofer_seguro(res[0].chofer_seguro);
+          setChofer_nPoliza(res[0].chofer_nPoliza);
+          setChofer_nVtv(res[0].chofer_nVtv);
+          setChofer_vehiculoCapacidad(res[0].chofer_vehiculoCapacidad);
+          setChofer_habilitacion(res[0].chofer_habilitacion);
+        }
+      } else {
+        console.log("sin ID");
+      }
+    })(setEdit(false));
+  }, []);
+
+  const [errorMessage, setErrorMessage] = useState("");
   const [timePickerValue, setTimePickerValue] = useState(null);
   const [helper, setHelper] = useState("");
-  const [nombreFocused, setNombreFocused] = useState(false);
-  const [direccFocus, setDireccFocus] = useState(false);
-  const [localidadFocus, setLocalidadFocus] = useState(false);
-  const [emailFocus, setEmailFocus] = useState(false);
-  const [telFocus, setTelFocus] = useState(false);
-  const [nombreDFocus, setNombreDFocus] = useState(false);
-  const [apellidoDFocus, setApellidoDFocus] = useState(false);
-  const [tansportFocus, setTansportFocus] = useState(false);
-  const [dateFocus, setDateFocus] = useState(false);
-  const [timeFocus, setTimeFocus] = useState(false);
-  const [data, setData] = useState(dataPre);
-  const [imgData, setImgData] = useState({ preview: noImg });
+  const [prov_asoc, setProv_asoc] = useState("");
+  const [prov_nombre, setProv_nombre] = useState("");
+  const [prov_dni, setProv_dni] = useState("");
+  const [chofer_cuitTitular, setChofer_cuitTitular] = useState("");
+  const [chofer, setChofer] = useState("");
+  const [chofer_dni, setChofer_dni] = useState("");
+  const [chofer_cuitSocio, setChofer_cuitSocio] = useState("");
+  const [prov_titularVehiculo, setProv_titularVehiculo] = useState("");
+  const [chofer_vehiculo, setChofer_vehiculo] = useState("");
+  const [chofer_patente, setChofer_patente] = useState("");
+  const [chofer_anioMod, setChofer_anioMod] = useState("");
+  const [chofer_seguro, setChofer_seguro] = useState("");
+  const [chofer_nPoliza, setChofer_nPoliza] = useState("");
+  const [chofer_nVtv, setChofer_nVtv] = useState("");
+  const [chofer_vehiculoCapacidad, setChofer_vehiculoCapacidad] = useState("");
+  const [chofer_habilitacion, setChofer_habilitacion] = useState("");
+
+  const [data, setData] = useState({});
   const [OpenDialog, setOpenDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
 
+  const [vtoRegistro, setVtoRegistro] = useState(null);
+  const [vtoProrroga, setVtoProrroga] = useState(null);
+  const [vtoPoliza, setVtoPoliza] = useState(null);
+  const [vtoHab, setVtoHab] = useState(null);
+  const [vtoVtv, setVtoVtv] = useState(null);
+  const [vtoCupon, setVtoCupon] = useState(null);
+
+  const [dniTitF, setDniTitF] = useState({ preview: noImg });
+  const [dniTitD, setDniTitD] = useState({ preview: noImg });
+  const [dniChofF, setDniChofF] = useState({ preview: noImg });
+  const [dniChofD, setDniChofD] = useState({ preview: noImg });
+  const [hab1, setHab1] = useState({ preview: noImg });
+  const [hab2, setHab2] = useState({ preview: noImg });
+  const [pol1, setPol1] = useState({ preview: noImg });
+  const [pol2, setPol2] = useState({ preview: noImg });
+  const [seg1, setSeg1] = useState({ preview: noImg });
+  const [seg2, setSeg2] = useState({ preview: noImg });
+  const [regTitF, setRegTitF] = useState({ preview: noImg });
+  const [regTitD, setRegTitD] = useState({ preview: noImg });
+  const [regChofF, setRegChofF] = useState({ preview: noImg });
+  const [regChofD, setRegChofD] = useState({ preview: noImg });
+  const [vtv, setVtv] = useState({ preview: noImg });
+
   const [dniTitFPreview, setDniTitFImgPreview] = useState(noImg);
   const [dniTitDPreview, setDniTitDImgPreview] = useState(noImg);
-  const [dniChofFPreview, setDniChofFImgPreview] = useState(noImg);
-  const [dniChofDPreview, setDniChofDImgPreview] = useState(noImg);
-  const [hab1Preview, setHab1Preview] = useState(noImg);
-  const [hab2Preview, setHab2Preview] = useState(noImg);
-  const [pol1Preview, setPol1Preview] = useState(noImg);
-  const [pol2Preview, setPol2Preview] = useState(noImg);
-  const [seg1Preview, setSeg1Preview] = useState(noImg);
-  const [seg2Preview, setSeg2Preview] = useState(noImg);
-  const [regTitFPreview, setRegTitFImgPreview] = useState(noImg);
-  const [regTitDPreview, setRegTitDImgPreview] = useState(noImg);
-  const [regChofFPreview, setRegChofFImgPreview] = useState(noImg);
-  const [regChofDPreview, setRegChofDImgPreview] = useState(noImg);
-  const [vtvPreview, setVtvPreview] = useState(noImg);
 
   const handleDniTitFPreview = (e) => {
-    setImgData({
+    setDniTitF({
       preview: URL.createObjectURL(e.target.files[0]),
       img: e.target.files[0],
       img_nombre: e.target.name,
-      prov_id: document.getElementById("nAsos").value,
+      prov_id: document.getElementById("prov_asoc").value,
     });
-    console.log(document.getElementById("nAsos").value);
   };
   const handleDniTitDPreview = (e) => {
-    setDniTitDImgPreview(URL.createObjectURL(e.target.files[0]));
+    setDniTitD({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleDniChofFPreview = (e) => {
-    setDniChofFImgPreview(URL.createObjectURL(e.target.files[0]));
+    setDniChofF({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleDniChofDPreview = (e) => {
-    setDniChofDImgPreview(URL.createObjectURL(e.target.files[0]));
+    setDniChofD({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleHab1Preview = (e) => {
-    setHab1Preview(URL.createObjectURL(e.target.files[0]));
+    setHab1({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleHab2Preview = (e) => {
-    setHab2Preview(URL.createObjectURL(e.target.files[0]));
+    setHab2({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handlePol1Preview = (e) => {
-    setPol1Preview(URL.createObjectURL(e.target.files[0]));
+    setPol1({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handlePol2Preview = (e) => {
-    setPol2Preview(URL.createObjectURL(e.target.files[0]));
+    setPol2({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleSeg1Preview = (e) => {
-    setSeg1Preview(URL.createObjectURL(e.target.files[0]));
+    setSeg1({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleSeg2Preview = (e) => {
-    setSeg2Preview(URL.createObjectURL(e.target.files[0]));
+    setSeg2({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleRegTitFPreview = (e) => {
-    setRegTitFImgPreview(URL.createObjectURL(e.target.files[0]));
+    setRegTitF({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleRegTitDPreview = (e) => {
-    setRegTitDImgPreview(URL.createObjectURL(e.target.files[0]));
+    setRegTitD({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleRegChofFPreview = (e) => {
-    setRegChofFImgPreview(URL.createObjectURL(e.target.files[0]));
+    setRegChofF({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleRegChofDPreview = (e) => {
-    setRegChofDImgPreview(URL.createObjectURL(e.target.files[0]));
+    setRegChofD({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
   };
   const handleVtvPreview = (e) => {
-    setVtvPreview(URL.createObjectURL(e.target.files[0]));
+    setVtv({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
+  };
+
+  const guardarImg = async (data) => {
+    if (data.img_nombre !== undefined) {
+      const resImg = await uploadImage(data.img, data.img_nombre, data.prov_id);
+      console.log("imagen guadada");
+    } else {
+      console.log("imagen no guardada");
+    }
   };
 
   const handleOpenDialog = () => {
@@ -148,7 +261,8 @@ export default function IncriptionForm() {
     setOpenDialog(false);
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event, seter) => {
+    seter(event.target.value);
     setData({
       ...data,
       [event.target.name]: event.target.value,
@@ -161,6 +275,7 @@ export default function IncriptionForm() {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
+    // console.log(document.getElementById("nAsos").value);
     // if (data.nombreColegio == null || "") {
     //   setNombreFocused(true);
     // } else if (data.direccColegio == null || "") {
@@ -183,24 +298,35 @@ export default function IncriptionForm() {
     //   setTimeFocus(true);
     // } else {
     try {
-      console.log(imgData.prov_id);
-      const resImg = await uploadImage(
-        imgData.img,
-        imgData.img_nombre,
-        imgData.prov_id
-      );
-      console.log(resImg);
-      // const res = await createNewInscription(data);
-      // if (res.data.status === "success") {
-      //   setContentDialog("success");
-      //   handleOpenDialog();
-      //   setTimeout(handleCloseDialog, 1000);
-      //   setTimeout(reload, 1000);
-      // } else {
-      //   setContentDialog("error");
-      //   handleOpenDialog();
-      //   setTimeout(handleCloseDialog, 2000);
-      // }
+      console.log(data);
+      const res = await createNewProv(data); //work!!!
+
+      guardarImg(dniTitF);
+      guardarImg(dniTitD);
+      guardarImg(dniChofF);
+      guardarImg(dniChofD);
+      guardarImg(hab1);
+      guardarImg(hab2);
+      guardarImg(pol1);
+      guardarImg(pol2);
+      guardarImg(seg1);
+      guardarImg(seg2);
+      guardarImg(regTitF);
+      guardarImg(regTitD);
+      guardarImg(regChofF);
+      guardarImg(regChofD);
+      guardarImg(vtv);
+
+      if (res.data.status === "success") {
+        setContentDialog("success");
+        handleOpenDialog();
+        setTimeout(handleCloseDialog, 1000);
+        setTimeout(reload, 1000);
+      } else {
+        setContentDialog("error");
+        handleOpenDialog();
+        setTimeout(handleCloseDialog, 2000);
+      }
     } catch (e) {
       console.log("error handle", e);
       setContentDialog("error");
@@ -210,20 +336,20 @@ export default function IncriptionForm() {
     // }
   };
 
-  const dateOnChange = (newValue) => {
-    setDatePickerValue(newValue);
-    setData({
-      ...data,
-      dateViaje: format(newValue, "dd-MM-yyyy"),
-    });
-  };
-
-  const timeOnChange = (newValue) => {
-    setTimePickerValue(newValue);
-    setData({
-      ...data,
-      timeViaje: format(newValue, "HH:mm"),
-    });
+  const dateOnChange = (date, set, dateId) => {
+    set(date);
+    try {
+      setData({
+        ...data,
+        [dateId]: format(date, "yyyy-MM-dd"),
+        // format(date, "yyyy-MM-dd")
+      });
+    } catch {
+      setData({
+        ...data,
+        [dateId]: date,
+      });
+    }
   };
 
   const textInput = useRef(null);
@@ -274,49 +400,53 @@ export default function IncriptionForm() {
                 <TextField
                   error={setErrorMessage === ""}
                   margin="normal"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setProv_asoc)}
                   required
                   inputRef={textInput}
-                  id="nAsos"
-                  name="nAsos"
+                  id="prov_asoc"
+                  name="prov_asoc"
                   label="Nº Asociado"
                   helperText={errorMessage}
                   variant="standard"
                   size="small"
+                  value={prov_asoc}
                 />
                 <TextField
                   variant="standard"
                   margin="normal"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setProv_nombre)}
                   required
                   helperText={helper}
                   fullWidth
-                  id="nombreColegio"
-                  name="nombreColegio"
+                  id="prov_nombre"
+                  name="prov_nombre"
+                  value={prov_nombre}
                   label="Nombre y apellido"
                   size="small"
                 />
                 <TextField
                   variant="standard"
                   margin="normal"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setProv_dni)}
                   required
                   helperText={helper}
                   fullWidth
-                  id="nombreColegio"
-                  name="nombreColegio"
+                  id="prov_dni"
+                  name="prov_dni"
+                  value={prov_dni}
                   label="DNI"
                   size="small"
                 />
                 <TextField
                   variant="standard"
                   margin="normal"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_cuitTitular)}
                   required
                   helperText={helper}
                   fullWidth
-                  id="nombreColegio"
-                  name="nombreColegio"
+                  id="chofer_cuitTitular"
+                  name="chofer_cuitTitular"
+                  value={chofer_cuitTitular}
                   label="CUIT"
                   size="small"
                 />
@@ -328,12 +458,13 @@ export default function IncriptionForm() {
                 <TextField
                   variant="standard"
                   margin="normal"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer)}
                   required
                   helperText={helper}
                   fullWidth
-                  id="nombreColegio"
-                  name="nombreColegio"
+                  id="chofer"
+                  name="chofer"
+                  value={chofer}
                   label="Nombre y apellido"
                   size="small"
                 />
@@ -341,11 +472,12 @@ export default function IncriptionForm() {
                   <TextField
                     variant="standard"
                     margin="normal"
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, setChofer_dni)}
                     required
                     fullWidth
-                    id="direccColegio"
-                    name="direccColegio"
+                    id="chofer_dni"
+                    name="chofer_dni"
+                    value={chofer_dni}
                     label="DNI"
                     // autoComplete="street-address"
                     size="small"
@@ -353,28 +485,64 @@ export default function IncriptionForm() {
                   <TextField
                     variant="standard"
                     margin="normal"
-                    onChange={handleInputChange}
+                    onChange={(e) => handleInputChange(e, setChofer_cuitSocio)}
                     required
                     helperText={helper}
                     fullWidth
-                    id="nombreColegio"
-                    name="nombreColegio"
+                    id="chofer_cuitSocio"
+                    name="chofer_cuitSocio"
+                    value={chofer_cuitSocio}
                     label="CUIT"
                     size="small"
                   />
-                  <TextField
-                    variant="standard"
-                    margin="normal"
-                    onChange={handleInputChange}
-                    required
-                    helperText={helper}
-                    fullWidth
-                    id="nombreColegio"
-                    name="nombreColegio"
-                    label="Vto Registro"
-                    size="small"
-                    placeholder="DD/MM/AAAA"
-                  />
+                  <LocalizationProvider
+                    dateAdapter={AdapterDateFns}
+                    adapterLocale={esLocale}
+                  >
+                    <DatePicker
+                      variant="inline"
+                      label="Vto Registro"
+                      value={vtoRegistro}
+                      onChange={(date) =>
+                        dateOnChange(date, setVtoRegistro, "chofer_registro")
+                      }
+                      InputAdornmentProps={{ position: "start" }}
+                      renderInput={(params) => (
+                        <TextField
+                          placeholder="DD/MM/AAAA"
+                          margin="normal"
+                          size="small"
+                          fullWidth
+                          variant="standard"
+                          {...params}
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
+                  <LocalizationProvider
+                    dateAdapter={AdapterDateFns}
+                    adapterLocale={esLocale}
+                  >
+                    <DatePicker
+                      variant="inline"
+                      label="Vto Prorroga"
+                      value={vtoProrroga}
+                      onChange={(date) =>
+                        dateOnChange(date, setVtoProrroga, "chofer_prorroga")
+                      }
+                      InputAdornmentProps={{ position: "start" }}
+                      renderInput={(params) => (
+                        <TextField
+                          placeholder="DD/MM/AAAA"
+                          margin="normal"
+                          size="small"
+                          fullWidth
+                          variant="standard"
+                          {...params}
+                        />
+                      )}
+                    />
+                  </LocalizationProvider>
                 </Grid>
               </Grid>
               <Grid item xs={12}>
@@ -383,11 +551,14 @@ export default function IncriptionForm() {
                 </Typography>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) =>
+                    handleInputChange(e, setProv_titularVehiculo)
+                  }
                   required
                   fullWidth
-                  id="direccColegio"
-                  name="direccColegio"
+                  id="prov_titularVehiculo"
+                  name="prov_titularVehiculo"
+                  value={prov_titularVehiculo}
                   label="Titular del vehiculo"
                   // autoComplete="street-address"
                   size="small"
@@ -396,11 +567,12 @@ export default function IncriptionForm() {
               <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_vehiculo)}
                   required
                   fullWidth
-                  id="localidadColegio"
-                  name="localidadColegio"
+                  id="chofer_vehiculo"
+                  name="chofer_vehiculo"
+                  value={chofer_vehiculo}
                   label="Vehiculo(marca/modelo)"
                   // autoComplete="address-level1"
                   size="small"
@@ -409,12 +581,13 @@ export default function IncriptionForm() {
               <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_patente)}
                   required
                   fullWidth
-                  id="emailColegio"
+                  id="chofer_patente"
+                  name="chofer_patente"
+                  value={chofer_patente}
                   label="Patente"
-                  name="patente"
                   // autoComplete="email"
                   size="small"
                 />
@@ -422,11 +595,12 @@ export default function IncriptionForm() {
               <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_anioMod)}
                   required
                   fullWidth
-                  id="localidadColegio"
-                  name="localidadColegio"
+                  id="chofer_anioMod"
+                  name="chofer_anioMod"
+                  value={chofer_anioMod}
                   label="Año"
                   // autoComplete="address-level1"
                   size="small"
@@ -435,11 +609,12 @@ export default function IncriptionForm() {
               <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_seguro)}
                   required
                   fullWidth
-                  id="telColegio"
-                  name="telColegio"
+                  id="chofer_seguro"
+                  name="chofer_seguro"
+                  value={chofer_seguro}
                   label="Compañia de seguro"
                   // autoComplete="tel"
                   size="small"
@@ -448,99 +623,157 @@ export default function IncriptionForm() {
               <Grid item xs={12} sm={4}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
-                  name="nombreDirectivo"
+                  onChange={(e) => handleInputChange(e, setChofer_nPoliza)}
                   required
                   fullWidth
-                  id="nombreDirectivo"
+                  id="chofer_nPoliza"
+                  name="chofer_nPoliza"
+                  value={chofer_nPoliza}
                   label="Nº poliza"
                   // autoComplete="given-name"
                   size="small"
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
-                <TextField
-                  variant="standard"
-                  onChange={handleInputChange}
-                  name="nombreDirectivo"
-                  required
-                  fullWidth
-                  id="nombreDirectivo"
-                  label="Vto poliza"
-                  // autoComplete="given-name"
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDateFns}
+                  adapterLocale={esLocale}
+                >
+                  <DatePicker
+                    variant="inline"
+                    label="Vto poliza"
+                    value={vtoPoliza}
+                    onChange={(date) =>
+                      dateOnChange(date, setVtoPoliza, "chofer_vtoPoliza")
+                    }
+                    InputAdornmentProps={{ position: "start" }}
+                    renderInput={(params) => (
+                      <TextField
+                        placeholder="DD/MM/AAAA"
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        {...params}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_habilitacion)}
                   required
                   fullWidth
-                  id="apellidoDirectivo"
-                  name="apellidoDirectivo"
+                  id="chofer_habilitacion"
+                  name="chofer_habilitacion"
+                  value={chofer_habilitacion}
                   label=" Nº habilitación municipal"
                   // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  variant="standard"
-                  onChange={handleInputChange}
-                  required
-                  fullWidth
-                  id="apellidoDirectivo"
-                  name="apellidoDirectivo"
-                  label="Vto habilitación"
-                  // autoComplete="family-name"
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDateFns}
+                  adapterLocale={esLocale}
+                >
+                  <DatePicker
+                    variant="inline"
+                    label="Vto habilitación"
+                    value={vtoHab}
+                    onChange={(date) =>
+                      dateOnChange(date, setVtoHab, "chofer_vtoHab")
+                    }
+                    InputAdornmentProps={{ position: "start" }}
+                    renderInput={(params) => (
+                      <TextField
+                        placeholder="DD/MM/AAAA"
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        {...params}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) => handleInputChange(e, setChofer_nVtv)}
                   required
                   fullWidth
-                  id="apellidoDirectivo"
-                  name="apellidoDirectivo"
+                  id="chofer_nVtv"
+                  name="chofer_nVtv"
+                  value={chofer_nVtv}
                   label="Nº certificado Técnico / VTV"
                   // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  variant="standard"
-                  onChange={handleInputChange}
-                  required
-                  fullWidth
-                  id="apellidoDirectivo"
-                  name="apellidoDirectivo"
-                  label="Vto VTV"
-                  // autoComplete="family-name"
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDateFns}
+                  adapterLocale={esLocale}
+                >
+                  <DatePicker
+                    variant="inline"
+                    label="Vto VTV"
+                    value={vtoVtv}
+                    onChange={(date) =>
+                      dateOnChange(date, setVtoVtv, "chofer_vtoVtv")
+                    }
+                    InputAdornmentProps={{ position: "start" }}
+                    renderInput={(params) => (
+                      <TextField
+                        placeholder="DD/MM/AAAA"
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        {...params}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
                   variant="standard"
-                  onChange={handleInputChange}
+                  onChange={(e) =>
+                    handleInputChange(e, setChofer_vehiculoCapacidad)
+                  }
                   required
                   fullWidth
-                  id="apellidoDirectivo"
-                  name="apellidoDirectivo"
+                  id="chofer_vehiculoCapacidad"
+                  name="chofer_vehiculoCapacidad"
+                  value={chofer_vehiculoCapacidad}
                   label="Capacidad"
                   // autoComplete="family-name"
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
-                  variant="standard"
-                  onChange={handleInputChange}
-                  required
-                  fullWidth
-                  id="apellidoDirectivo"
-                  name="apellidoDirectivo"
-                  label="Vto cupón de pago"
-                  // autoComplete="family-name"
-                />
+                <LocalizationProvider
+                  dateAdapter={AdapterDateFns}
+                  adapterLocale={esLocale}
+                >
+                  <DatePicker
+                    variant="inline"
+                    label="Vto Cupón"
+                    value={vtoCupon}
+                    onChange={(date) =>
+                      dateOnChange(date, setVtoCupon, "chofer_cupon")
+                    }
+                    InputAdornmentProps={{ position: "start" }}
+                    renderInput={(params) => (
+                      <TextField
+                        placeholder="DD/MM/AAAA"
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        {...params}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
               </Grid>
             </Grid>
 
@@ -552,7 +785,7 @@ export default function IncriptionForm() {
                 container
                 direction="row"
                 justifyContent="center"
-                alignItems="center"
+                alignItems="stretch"
                 spacing={2}
                 sx={{ mt: 1 }}
               >
@@ -562,7 +795,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setImgData({ preview: noImg })}
+                    onClick={() => setDniTitF({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -570,11 +803,10 @@ export default function IncriptionForm() {
                     </Tooltip>
                   </IconButton>
                   <Avatar
-                    onChange={handleInputChange}
                     variant="rounded"
                     id="dniTitF"
                     alt="no-photo"
-                    src={imgData.preview}
+                    src={dniTitF.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -606,7 +838,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniTitDImgPreview(noImg)}
+                    onClick={() => setDniTitD({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -617,7 +849,7 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={dniTitDPreview}
+                    src={dniTitD.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -636,7 +868,8 @@ export default function IncriptionForm() {
                     DNI titular Dorso
                     <input
                       hidden
-                      id="files"
+                      id="dniTitD"
+                      name="dniTitD"
                       accept="image/*"
                       multiple
                       type="file"
@@ -649,7 +882,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniChofFImgPreview(noImg)}
+                    onClick={() => setDniChofF({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -660,7 +893,7 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={dniChofFPreview}
+                    src={dniChofF.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -679,7 +912,8 @@ export default function IncriptionForm() {
                     DNI Chofer Frente
                     <input
                       hidden
-                      id="files"
+                      id="dniChofF"
+                      name="dniChofF"
                       accept="image/*"
                       multiple
                       type="file"
@@ -691,7 +925,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniChofDImgPreview(noImg)}
+                    onClick={() => setDniChofD({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -703,7 +937,7 @@ export default function IncriptionForm() {
                     id="dniFront"
                     name="dniFront"
                     alt="no-photo"
-                    src={dniChofDPreview}
+                    src={dniChofD.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -722,7 +956,8 @@ export default function IncriptionForm() {
                     DNI Chofer Dorso
                     <input
                       hidden
-                      id="files"
+                      id="dniFront"
+                      name="dniFront"
                       accept="image/*"
                       multiple
                       type="file"
@@ -735,7 +970,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setHab1Preview(noImg)}
+                    onClick={() => setHab1({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -746,7 +981,7 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={hab1Preview}
+                    src={hab1.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -765,7 +1000,7 @@ export default function IncriptionForm() {
                     habilitación foto 1
                     <input
                       hidden
-                      id="files"
+                      id="hab1"
                       accept="image/*"
                       multiple
                       type="file"
@@ -779,7 +1014,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setHab2Preview(noImg)}
+                    onClick={() => setHab2({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -790,7 +1025,7 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={hab2Preview}
+                    src={hab2.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -809,7 +1044,7 @@ export default function IncriptionForm() {
                     habilitación foto 2
                     <input
                       hidden
-                      id="files"
+                      id="hab2"
                       accept="image/*"
                       multiple
                       type="file"
@@ -823,7 +1058,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setPol1Preview(noImg)}
+                    onClick={() => setPol1({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -834,7 +1069,7 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={pol1Preview}
+                    src={pol1.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -853,7 +1088,7 @@ export default function IncriptionForm() {
                     poliza foto 1
                     <input
                       hidden
-                      id="files"
+                      id="pol1"
                       accept="image/*"
                       multiple
                       type="file"
@@ -867,7 +1102,7 @@ export default function IncriptionForm() {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setPol2Preview(noImg)}
+                    onClick={() => setPol2({ preview: noImg })}
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -878,7 +1113,7 @@ export default function IncriptionForm() {
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
-                    src={pol2Preview}
+                    src={pol2.preview}
                     sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                     style={{
                       border: "0.1px solid  #E7441060",
@@ -897,7 +1132,7 @@ export default function IncriptionForm() {
                     poliza foto 2
                     <input
                       hidden
-                      id="files"
+                      id="pol2"
                       accept="image/*"
                       multiple
                       type="file"
@@ -912,15 +1147,15 @@ export default function IncriptionForm() {
               container
               direction="row"
               justifyContent="center"
-              alignItems="center"
-              spacing={2}
+              alignItems="stretch"
+              spacing={1}
             >
               {/**Inicio seguro foto 1 */}
               <Grid>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setSeg1Preview(noImg)}
+                  onClick={() => setSeg1({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -931,7 +1166,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={seg1Preview}
+                  src={seg1.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -950,7 +1185,7 @@ export default function IncriptionForm() {
                   seguro foto 1
                   <input
                     hidden
-                    id="files"
+                    id="seg1"
                     accept="image/*"
                     multiple
                     type="file"
@@ -964,7 +1199,7 @@ export default function IncriptionForm() {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setSeg2Preview(noImg)}
+                  onClick={() => setSeg2({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -975,7 +1210,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={seg2Preview}
+                  src={seg2.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -994,7 +1229,7 @@ export default function IncriptionForm() {
                   seguro foto 2
                   <input
                     hidden
-                    id="files"
+                    id="seg2"
                     accept="image/*"
                     multiple
                     type="file"
@@ -1008,7 +1243,7 @@ export default function IncriptionForm() {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegTitFImgPreview(noImg)}
+                  onClick={() => setRegTitF({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1019,7 +1254,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={regTitFPreview}
+                  src={regTitF.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -1038,7 +1273,7 @@ export default function IncriptionForm() {
                   registro titular frente
                   <input
                     hidden
-                    id="files"
+                    id="regTitF"
                     accept="image/*"
                     multiple
                     type="file"
@@ -1052,7 +1287,7 @@ export default function IncriptionForm() {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegTitDImgPreview(noImg)}
+                  onClick={() => setRegTitD({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1063,7 +1298,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={regTitDPreview}
+                  src={regTitD.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -1082,7 +1317,7 @@ export default function IncriptionForm() {
                   registro titular dorso
                   <input
                     hidden
-                    id="files"
+                    id="regTitD"
                     accept="image/*"
                     multiple
                     type="file"
@@ -1096,7 +1331,7 @@ export default function IncriptionForm() {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegChofFImgPreview(noImg)}
+                  onClick={() => setRegChofF({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1107,7 +1342,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={regChofFPreview}
+                  src={regChofF.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -1126,7 +1361,7 @@ export default function IncriptionForm() {
                   registro chofer frente
                   <input
                     hidden
-                    id="files"
+                    id="regChofF"
                     accept="image/*"
                     multiple
                     type="file"
@@ -1140,7 +1375,7 @@ export default function IncriptionForm() {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegChofDImgPreview(noImg)}
+                  onClick={() => setRegChofD({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1151,7 +1386,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={regChofDPreview}
+                  src={regChofD.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -1170,7 +1405,7 @@ export default function IncriptionForm() {
                   registro chofer dorso
                   <input
                     hidden
-                    id="files"
+                    id="regChofD"
                     accept="image/*"
                     multiple
                     type="file"
@@ -1184,7 +1419,7 @@ export default function IncriptionForm() {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setVtvPreview(noImg)}
+                  onClick={() => setVtv({ preview: noImg })}
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1195,7 +1430,7 @@ export default function IncriptionForm() {
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
-                  src={vtvPreview}
+                  src={vtv.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
                   style={{
                     border: "0.1px solid  #E7441060",
@@ -1214,7 +1449,7 @@ export default function IncriptionForm() {
                   informe vtv
                   <input
                     hidden
-                    id="files"
+                    id="vtv"
                     accept="image/*"
                     multiple
                     type="file"

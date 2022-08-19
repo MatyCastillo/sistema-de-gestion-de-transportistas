@@ -1,14 +1,23 @@
 import axios from "axios";
 import API from "../utils/const";
 
-const getAllIncriptions = async () => {
-  const petition = await axios.get(`${API.URI}/api/v1/inscriptions/`);
+const getAllProv = async () => {
+  const petition = await axios.get(`${API.URI}/api/v1/proveedores/`);
   return petition.data.data;
 };
-
-const createNewInscription = async (data) => {
+const getProvById = async (id) => {
   try {
-    const resp = await axios.post(`${API.URI}/api/v1/inscriptions/`, data);
+    const petition = await axios.get(
+      `${API.URI}/api/v1/proveedores/prov-${id}`
+    );
+    return petition.data.data;
+  } catch (err) {
+    return err;
+  }
+};
+const createNewProv = async (data) => {
+  try {
+    const resp = await axios.post(`${API.URI}/api/v1/proveedores/`, data);
     return resp;
   } catch (err) {
     // Handle Error Here
@@ -28,27 +37,6 @@ const loginService = async ({ nombre, password }) => {
     return error;
   }
 };
-
-// const uploadImage = (data) => {
-//   var data = new FormData();
-//   formData.append("fotos", uri_fotos);
-//   fetch("http://localhost:8080/api/v1/proveedores/image?img", {
-//     method: "POST",
-//     headers: {
-//       Accept: "application/json",
-//       "Content-Type": "multipart/form-data",
-//     },
-//     body: data,
-//   })
-//     .then((response) => response.json())
-//     .then((res) => {
-//       if (res.code == 1) {
-//         console.log("se subio correctamente");
-//       } else {
-//         console.log("Hubo un error");
-//       }
-//     });
-// };
 
 const uploadImage = async (file, name, id) => {
   const bodyFormData = new FormData();
@@ -71,4 +59,4 @@ const uploadImage = async (file, name, id) => {
     return err;
   }
 };
-export { getAllIncriptions, createNewInscription, loginService, uploadImage };
+export { getAllProv, createNewProv, loginService, uploadImage, getProvById };

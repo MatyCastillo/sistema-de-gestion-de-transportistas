@@ -1,10 +1,8 @@
 import React, { useEffect } from "react";
-import NabBar from "../components/navBar";
 import Table from "../components/table";
 import Nav2 from "../components/nav2";
 import useUser from "../hooks/useUser";
 import { useNavigate } from "react-router-dom";
-// import IncriptionForm from "../components/inscriptionForm";
 
 export default function Home(prop) {
   const navigate = useNavigate();
