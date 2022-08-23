@@ -18,7 +18,7 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import SaveIcon from "@mui/icons-material/Save";
 import esLocale from "date-fns/locale/es";
-import format from "date-fns/format";
+import { format, formatISO, parse } from "date-fns";
 import AlertDialog from "./alertDialog";
 import { createNewProv, uploadImage, getProvById } from "../services";
 import { useNavigate } from "react-router-dom";
@@ -39,15 +39,29 @@ const theme = createTheme({
   },
 });
 
+const parceDateDb = (date) => {
+  // try {
+  var dateFormat = formatISO(new Date(date), {
+    representation: "date",
+  });
+  var dateCell = parse(dateFormat, "yyyy-MM-dd", new Date());
+  return format(dateCell, "dd/MM/yyyy");
+  // } catch (e) {
+  //   console.log(e);
+  //   return "00/00/0000";
+  // }
+};
+
 export default function IncriptionForm(props) {
   let navigate = useNavigate();
-
+  var userType = sessionStorage.getItem("userType");
+  // const userType = props.userType;
   const [edit, setEdit] = useState();
-
   useEffect(() => {
     (async () => {
       if (props.id !== undefined) {
         const res = await getProvById(props.id);
+        console.log(res);
         if (res) {
           setEdit(res[0]);
           setProv_asoc(res[0].prov_asoc);
@@ -66,6 +80,16 @@ export default function IncriptionForm(props) {
           setChofer_nVtv(res[0].chofer_nVtv);
           setChofer_vehiculoCapacidad(res[0].chofer_vehiculoCapacidad);
           setChofer_habilitacion(res[0].chofer_habilitacion);
+          setVtoRegistro(parceDateDb(res[0].chofer_registro));
+          setVtoProrroga(parceDateDb(res[0].chofer_prorroga));
+          setVtoPoliza(parceDateDb(res[0].chofer_vtoPoliza));
+          setVtoHab(parceDateDb(res[0].chofer_vtoHab));
+          setVtoVtv(parceDateDb(res[0].chofer_vtoVtv));
+          setVtoCupon(parceDateDb(res[0].chofer_cupon));
+          console.log("registro ISO", res[0].chofer_registro);
+          console.log("poliza ISO", res[0].chofer_vtoPoliza);
+          console.log("registro", parceDateDb(res[0].chofer_registro));
+          console.log("poliza", parceDateDb(res[0].chofer_vtoPoliza));
         }
       } else {
         console.log("sin ID");
@@ -410,6 +434,10 @@ export default function IncriptionForm(props) {
                   variant="standard"
                   size="small"
                   value={prov_asoc}
+                  //disabled={userType === "administrador" ? false : true}
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
                 <TextField
                   variant="standard"
@@ -423,6 +451,9 @@ export default function IncriptionForm(props) {
                   value={prov_nombre}
                   label="Nombre y apellido"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
                 <TextField
                   variant="standard"
@@ -436,6 +467,9 @@ export default function IncriptionForm(props) {
                   value={prov_dni}
                   label="DNI"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
                 <TextField
                   variant="standard"
@@ -449,6 +483,9 @@ export default function IncriptionForm(props) {
                   value={chofer_cuitTitular}
                   label="CUIT"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} lg={6}>
@@ -467,6 +504,9 @@ export default function IncriptionForm(props) {
                   value={chofer}
                   label="Nombre y apellido"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
                 <Grid item xs={12}>
                   <TextField
@@ -481,6 +521,9 @@ export default function IncriptionForm(props) {
                     label="DNI"
                     // autoComplete="street-address"
                     size="small"
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
                   />
                   <TextField
                     variant="standard"
@@ -494,12 +537,18 @@ export default function IncriptionForm(props) {
                     value={chofer_cuitSocio}
                     label="CUIT"
                     size="small"
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
                   />
                   <LocalizationProvider
                     dateAdapter={AdapterDateFns}
                     adapterLocale={esLocale}
                   >
                     <DatePicker
+                      inputProps={{
+                        disabled: userType === "administrador" ? false : true,
+                      }}
                       variant="inline"
                       label="Vto Registro"
                       value={vtoRegistro}
@@ -524,6 +573,9 @@ export default function IncriptionForm(props) {
                     adapterLocale={esLocale}
                   >
                     <DatePicker
+                      inputProps={{
+                        disabled: userType === "administrador" ? false : true,
+                      }}
                       variant="inline"
                       label="Vto Prorroga"
                       value={vtoProrroga}
@@ -560,6 +612,9 @@ export default function IncriptionForm(props) {
                   name="prov_titularVehiculo"
                   value={prov_titularVehiculo}
                   label="Titular del vehiculo"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                   // autoComplete="street-address"
                   size="small"
                 />
@@ -575,6 +630,9 @@ export default function IncriptionForm(props) {
                   value={chofer_vehiculo}
                   label="Vehiculo(marca/modelo)"
                   // autoComplete="address-level1"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                   size="small"
                 />
               </Grid>
@@ -590,6 +648,9 @@ export default function IncriptionForm(props) {
                   label="Patente"
                   // autoComplete="email"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -604,6 +665,9 @@ export default function IncriptionForm(props) {
                   label="Año"
                   // autoComplete="address-level1"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -618,6 +682,9 @@ export default function IncriptionForm(props) {
                   label="Compañia de seguro"
                   // autoComplete="tel"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -632,6 +699,9 @@ export default function IncriptionForm(props) {
                   label="Nº poliza"
                   // autoComplete="given-name"
                   size="small"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                 />
               </Grid>
               <Grid item xs={12} sm={4}>
@@ -640,6 +710,9 @@ export default function IncriptionForm(props) {
                   adapterLocale={esLocale}
                 >
                   <DatePicker
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
                     variant="inline"
                     label="Vto poliza"
                     value={vtoPoliza}
@@ -669,6 +742,9 @@ export default function IncriptionForm(props) {
                   name="chofer_habilitacion"
                   value={chofer_habilitacion}
                   label=" Nº habilitación municipal"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                   // autoComplete="family-name"
                 />
               </Grid>
@@ -678,6 +754,9 @@ export default function IncriptionForm(props) {
                   adapterLocale={esLocale}
                 >
                   <DatePicker
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
                     variant="inline"
                     label="Vto habilitación"
                     value={vtoHab}
@@ -707,6 +786,9 @@ export default function IncriptionForm(props) {
                   name="chofer_nVtv"
                   value={chofer_nVtv}
                   label="Nº certificado Técnico / VTV"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                   // autoComplete="family-name"
                 />
               </Grid>
@@ -716,6 +798,9 @@ export default function IncriptionForm(props) {
                   adapterLocale={esLocale}
                 >
                   <DatePicker
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
                     variant="inline"
                     label="Vto VTV"
                     value={vtoVtv}
@@ -747,6 +832,9 @@ export default function IncriptionForm(props) {
                   name="chofer_vehiculoCapacidad"
                   value={chofer_vehiculoCapacidad}
                   label="Capacidad"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
                   // autoComplete="family-name"
                 />
               </Grid>
@@ -756,6 +844,9 @@ export default function IncriptionForm(props) {
                   adapterLocale={esLocale}
                 >
                   <DatePicker
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
                     variant="inline"
                     label="Vto Cupón"
                     value={vtoCupon}
@@ -795,7 +886,11 @@ export default function IncriptionForm(props) {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniTitF({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setDniTitF({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -812,33 +907,41 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    DNI Titular Frente
-                    <input
-                      hidden
-                      id="dniTitF"
-                      name="dniTitF"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handleDniTitFPreview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      DNI Titular Frente
+                      <input
+                        hidden
+                        id="dniTitF"
+                        name="dniTitF"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handleDniTitFPreview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 <Grid>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniTitD({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setDniTitD({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -855,34 +958,42 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    DNI titular Dorso
-                    <input
-                      hidden
-                      id="dniTitD"
-                      name="dniTitD"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handleDniTitDPreview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      DNI titular Dorso
+                      <input
+                        hidden
+                        id="dniTitD"
+                        name="dniTitD"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handleDniTitDPreview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 <Grid>
                   {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniChofF({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setDniChofF({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -899,33 +1010,41 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    DNI Chofer Frente
-                    <input
-                      hidden
-                      id="dniChofF"
-                      name="dniChofF"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handleDniChofFPreview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      DNI Chofer Frente
+                      <input
+                        hidden
+                        id="dniChofF"
+                        name="dniChofF"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handleDniChofFPreview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 <Grid>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setDniChofD({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setDniChofD({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -943,34 +1062,42 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    DNI Chofer Dorso
-                    <input
-                      hidden
-                      id="dniFront"
-                      name="dniFront"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handleDniChofDPreview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      DNI Chofer Dorso
+                      <input
+                        hidden
+                        id="dniFront"
+                        name="dniFront"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handleDniChofDPreview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 {/**Inicio habilitacion foto 1 */}
                 <Grid>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setHab1({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setHab1({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -987,26 +1114,31 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    habilitación foto 1
-                    <input
-                      hidden
-                      id="hab1"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handleHab1Preview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      habilitación foto 1
+                      <input
+                        hidden
+                        id="hab1"
+                        name="hab1"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handleHab1Preview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 {/**Fin habilitacion foto 1 */}
                 {/**Inicio habilitacion foto 2 */}
@@ -1014,7 +1146,11 @@ export default function IncriptionForm(props) {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setHab2({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setHab2({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1031,26 +1167,31 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    habilitación foto 2
-                    <input
-                      hidden
-                      id="hab2"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handleHab2Preview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      habilitación foto 2
+                      <input
+                        hidden
+                        id="hab2"
+                        name="hab2"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handleHab2Preview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 {/**Fin habilitacion foto 2 */}
                 {/**Inicio poliza foto 1 */}
@@ -1058,7 +1199,11 @@ export default function IncriptionForm(props) {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setPol1({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setPol1({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1075,26 +1220,31 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    poliza foto 1
-                    <input
-                      hidden
-                      id="pol1"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handlePol1Preview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      poliza foto 1
+                      <input
+                        hidden
+                        id="pol1"
+                        name="pol1"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handlePol1Preview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 {/**Fin poliza foto 1 */}
                 {/**Inicio poliza foto 2 */}
@@ -1102,7 +1252,11 @@ export default function IncriptionForm(props) {
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() => setPol2({ preview: noImg })}
+                    onClick={() =>
+                      userType === "administrador"
+                        ? setPol2({ preview: noImg })
+                        : ""
+                    }
                     sx={{ zIndex: "tooltip" }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1119,26 +1273,31 @@ export default function IncriptionForm(props) {
                       border: "0.1px solid  #E7441060",
                     }}
                   ></Avatar>
-                  <Button
-                    sx={{
-                      m: 2,
-                      mt: -1,
-                      maxWidth: "100px",
-                      textAlign: "center",
-                    }}
-                    component="label"
-                    variant="outlined"
-                  >
-                    poliza foto 2
-                    <input
-                      hidden
-                      id="pol2"
-                      accept="image/*"
-                      multiple
-                      type="file"
-                      onChange={handlePol2Preview}
-                    />
-                  </Button>
+                  {userType === "administrador" ? (
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                      }}
+                      component="label"
+                      variant="outlined"
+                    >
+                      poliza foto 2
+                      <input
+                        hidden
+                        id="pol2"
+                        name="pol2"
+                        accept="image/*"
+                        multiple
+                        type="file"
+                        onChange={handlePol2Preview}
+                      />
+                    </Button>
+                  ) : (
+                    <></>
+                  )}
                 </Grid>
                 {/**Fin poliza foto 2 */}
               </Grid>
@@ -1155,7 +1314,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setSeg1({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setSeg1({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1172,26 +1335,31 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  seguro foto 1
-                  <input
-                    hidden
-                    id="seg1"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleSeg1Preview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    seguro foto 1
+                    <input
+                      hidden
+                      id="seg1"
+                      name="seg1"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleSeg1Preview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin seguro foto 1 */}
               {/**Inicio seguro foto 2 */}
@@ -1199,7 +1367,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setSeg2({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setSeg2({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1216,26 +1388,31 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  seguro foto 2
-                  <input
-                    hidden
-                    id="seg2"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleSeg2Preview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    seguro foto 2
+                    <input
+                      hidden
+                      id="seg2"
+                      name="seg2"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleSeg2Preview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin seguro foto 2 */}
               {/**Inicio registro titular foto 1 */}
@@ -1243,7 +1420,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegTitF({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setRegTitF({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1260,26 +1441,31 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  registro titular frente
-                  <input
-                    hidden
-                    id="regTitF"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleRegTitFPreview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    registro titular frente
+                    <input
+                      hidden
+                      id="regTitF"
+                      name="regTitF"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleRegTitFPreview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin registro titular foto 1 */}
               {/**Inicio registro titular foto 2 */}
@@ -1287,7 +1473,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegTitD({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setRegTitD({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1304,26 +1494,31 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  registro titular dorso
-                  <input
-                    hidden
-                    id="regTitD"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleRegTitDPreview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    registro titular dorso
+                    <input
+                      hidden
+                      id="regTitD"
+                      name="regTitD"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleRegTitDPreview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin registro titular foto 2 */}
               {/**Inicio registro chofer foto 1 */}
@@ -1331,7 +1526,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegChofF({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setRegChofF({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1348,26 +1547,31 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  registro chofer frente
-                  <input
-                    hidden
-                    id="regChofF"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleRegChofFPreview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    registro chofer frente
+                    <input
+                      hidden
+                      id="regChofF"
+                      name="regChofF"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleRegChofFPreview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin registro chofer foto 1 */}
               {/**Inicio registro chofer foto 2 */}
@@ -1375,7 +1579,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setRegChofD({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setRegChofD({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1392,26 +1600,31 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  registro chofer dorso
-                  <input
-                    hidden
-                    id="regChofD"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleRegChofDPreview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    registro chofer dorso
+                    <input
+                      hidden
+                      id="regChofD"
+                      name="regChofD"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleRegChofDPreview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin registro chofer foto 2 */}
               {/**Inicio foto vtv */}
@@ -1419,7 +1632,11 @@ export default function IncriptionForm(props) {
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() => setVtv({ preview: noImg })}
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setVtv({ preview: noImg })
+                      : ""
+                  }
                   sx={{ zIndex: "tooltip" }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1429,6 +1646,7 @@ export default function IncriptionForm(props) {
                 <Avatar
                   variant="rounded"
                   id="dniFront"
+                  name="vtv"
                   alt="no-photo"
                   src={vtv.preview}
                   sx={{ width: 100, height: 100, m: 2, mt: -4 }}
@@ -1436,40 +1654,49 @@ export default function IncriptionForm(props) {
                     border: "0.1px solid  #E7441060",
                   }}
                 ></Avatar>
-                <Button
-                  sx={{
-                    m: 2,
-                    mt: -1,
-                    maxWidth: "100px",
-                    textAlign: "center",
-                  }}
-                  component="label"
-                  variant="outlined"
-                >
-                  informe vtv
-                  <input
-                    hidden
-                    id="vtv"
-                    accept="image/*"
-                    multiple
-                    type="file"
-                    onChange={handleVtvPreview}
-                  />
-                </Button>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    informe vtv
+                    <input
+                      hidden
+                      id="vtv"
+                      name="vtv"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleVtvPreview}
+                    />
+                  </Button>
+                ) : (
+                  <></>
+                )}
               </Grid>
               {/**Fin registro foto vtv */}
             </Grid>
-            <Grid container justifyContent="flex-end">
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                endIcon={<SaveIcon />}
-                onClick={handleSubmit}
-              >
-                Guardar
-              </Button>
-            </Grid>
+            {userType === "administrador" ? (
+              <Grid container justifyContent="flex-end">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  endIcon={<SaveIcon />}
+                  onClick={handleSubmit}
+                >
+                  Guardar
+                </Button>
+              </Grid>
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       </Container>

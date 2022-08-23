@@ -11,7 +11,9 @@ export default function Home(prop) {
   useEffect(() => {
     if (!isLogged) {
       {
-        navigate("/", { state: { message: "Inicie sesión para continuar" } });
+        navigate("/login", {
+          state: { message: "Inicie sesión para continuar" },
+        });
       }
     }
   });

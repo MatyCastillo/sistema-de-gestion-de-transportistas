@@ -104,6 +104,8 @@ const Drawer = styled(MuiDrawer, {
 const isMobile = window.innerWidth <= 500;
 
 export default function NavBar(props) {
+  var userType = sessionStorage.getItem("userType");
+  var userName = sessionStorage.getItem("userName");
   const { logout } = useUser();
   const [openSideBar, setOpenSideBar] = React.useState(
     !isMobile ? true : false
@@ -111,7 +113,9 @@ export default function NavBar(props) {
   const [openModal, setOpenModal] = React.useState(props.form ? true : false);
 
   const handleClickOpenModal = () => {
-    setOpenModal(true);
+    if (userType === "administrador") {
+      setOpenModal(true);
+    }
   };
 
   const handleCloseModal = () => {
@@ -160,6 +164,19 @@ export default function NavBar(props) {
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Sistema interno UTEAM
             </Typography>
+            <Tooltip
+              title={
+                userType && userType === "administrador"
+                  ? "Los adminstradores puede crear y editar datos"
+                  : "Los operadores solo puede visualizar los datos"
+              }
+            >
+              <Typography>
+                {userName && userType
+                  ? `Bienvenido, ${userName} (${userType})`
+                  : `Bienvenido, nombre (tipo de usario)`}
+              </Typography>
+            </Tooltip>
             <Tooltip title="Salir">
               <IconButton
                 size="large"
@@ -204,6 +221,7 @@ export default function NavBar(props) {
           <List>
             <ListItem
               onClick={handleClickOpenModal}
+              disabled={userType && userType === "administrador" ? false : true}
               key="form"
               disablePadding
               sx={{ display: "block" }}

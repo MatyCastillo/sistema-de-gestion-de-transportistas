@@ -32,9 +32,9 @@ const loginService = async ({ nombre, password }) => {
   };
   try {
     const response = await axios.post(`${API.URI}/api/v1/auth/login`, data);
-    return response.data.token;
+    return response.data;
   } catch (error) {
-    return error;
+    throw new Error("response is not ok");
   }
 };
 

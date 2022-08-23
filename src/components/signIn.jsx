@@ -30,16 +30,16 @@ const theme = createTheme({
 export default function SignIn() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { login, isLogged } = useUser();
+  const { isLoginLoading, hasLoginError, login, isLogged } = useUser();
   const [nombre, setNombre] = useState("");
   const [password, setPassword] = useState("");
 
-  if (location.state !== null || "") {
-    console.log(location.state.message);
-  }
+  // if (location.state !== null || "") {
+  //   console.log(location.state.message);
+  // }
 
   useEffect(() => {
-    if (isLogged) navigate("/loged", { replace: false });
+    if (isLogged) navigate("/");
   }, [isLogged, navigate]);
 
   const handleSubmit = (event) => {
@@ -67,64 +67,67 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Iniciar Sesión
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            noValidate
-            sx={{ mt: 1 }}
-          >
-            {location.state !== null || "" ? (
-              <Alert severity="error">{location.state.message}</Alert>
-            ) : (
-              <></>
-            )}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              onChange={(e) => setNombre(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Contraseña"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Recordar contraseña"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+          {isLoginLoading && <strong>Comprobando credenciales</strong>}
+          {!isLoginLoading && (
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
             >
-              Ingresar
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Olvidé la contraseña
-                </Link>
+              {hasLoginError ? (
+                <Alert severity="error">Credeciales invalidas</Alert>
+              ) : (
+                <></>
+              )}
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Usuario"
+                name="username"
+                autoFocus
+                onChange={(e) => setNombre(e.target.value)}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Contraseña"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Recordar contraseña"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Ingresar
+              </Button>
+              <Grid container>
+                <Grid item xs>
+                  <Link href="#" variant="body2">
+                    Olvidé la contraseña
+                  </Link>
+                </Grid>
+                <Grid item>
+                  {/* <Link href="#" variant="body2">
+                    {"Registrarme"}
+                  </Link> */}
+                </Grid>
               </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Registrarme"}
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+            </Box>
+          )}
+          {/* {hasLoginError && <strong>Credenciales invalidas</strong>} */}
         </Box>
       </Container>
     </ThemeProvider>

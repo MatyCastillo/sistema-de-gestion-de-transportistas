@@ -19,6 +19,7 @@ import { esES as coreEsES } from "@mui/material/locale";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import CloseIcon from "@mui/icons-material/Close";
+import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import { parse, startOfToday, isAfter, formatISO, format } from "date-fns";
 import IncriptionForm from "./inscriptionCarrierForm";
 
@@ -129,15 +130,15 @@ const rowsMock = [
 ];
 
 export default function DataTable() {
+  var userType = sessionStorage.getItem("userType");
   const [openModal, setOpenModal] = useState(false);
   const [idProv, setIdProv] = useState();
   var [rows, setRows] = useState([]);
   var [loading, setLoading] = useState(true);
 
-  const handleEditClick = (id) => () => {
+  const handleEditClick = (id, type) => () => {
     handleClickOpenModal();
     setIdProv(id);
-    console.log(id);
   };
 
   const handleClickOpenModal = () => {
@@ -358,7 +359,7 @@ export default function DataTable() {
     },
     { field: "chofer_cuitSocio", headerName: "CUIT Socio", width: 150 },
     {
-      field: "chofer_nombreTitular",
+      field: "prov_nombre",
       headerName: "Apellido y Nombre Titular",
       width: 200,
     },
@@ -371,25 +372,37 @@ export default function DataTable() {
       width: 100,
       cellClassName: "actions",
       getActions: ({ id }) => {
-        return [
-          <Tooltip title="Editar">
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="Edit"
-              className="textPrimary"
-              onClick={handleEditClick(id)}
-              color="success"
-            />
-          </Tooltip>,
-          <Tooltip title="Eliminar">
-            <GridActionsCellItem
-              icon={<DeleteIcon />}
-              label="Delete"
-              onClick={handleDeleteClick(id)}
-              color="error"
-            />
-          </Tooltip>,
-        ];
+        if (userType === "administrador") {
+          return [
+            <Tooltip title="Editar">
+              <GridActionsCellItem
+                icon={<EditIcon />}
+                label="Edit"
+                className="textPrimary"
+                onClick={handleEditClick(id, userType)}
+                color="success"
+              />
+            </Tooltip>,
+            <Tooltip title="Eliminar">
+              <GridActionsCellItem
+                icon={<DeleteIcon />}
+                label="Delete"
+                onClick={handleDeleteClick(id)}
+                color="error"
+              />
+            </Tooltip>,
+          ];
+        } else if (userType === "operador") {
+          return [
+            <Tooltip title="Ver">
+              <GridActionsCellItem
+                icon={<VisibilityTwoToneIcon />}
+                label="View"
+                onClick={handleEditClick(id, userType)}
+              />
+            </Tooltip>,
+          ];
+        }
       },
     },
   ];
@@ -437,7 +450,7 @@ export default function DataTable() {
             >
               <CloseIcon />
             </IconButton>
-            <IncriptionForm id={idProv} />
+            <IncriptionForm id={idProv} userType={userType} />
           </DialogContent>
         </Dialog>
       </ThemeProvider>
