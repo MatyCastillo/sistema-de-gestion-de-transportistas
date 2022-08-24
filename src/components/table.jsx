@@ -13,7 +13,7 @@ import {
   tableCellClasses,
   Tooltip,
 } from "@mui/material";
-import { getAllProv } from "../services";
+import { getAllProv, deleteProvById } from "../services";
 import { deepOrange } from "@mui/material/colors";
 import { esES as coreEsES } from "@mui/material/locale";
 import EditIcon from "@mui/icons-material/Edit";
@@ -22,6 +22,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import { parse, startOfToday, isAfter, formatISO, format } from "date-fns";
 import IncriptionForm from "./inscriptionCarrierForm";
+import { useNavigate } from "react-router-dom";
+import ConfirmDialog from "./confirmDialog";
 
 const theme = createTheme(
   {
@@ -130,9 +132,13 @@ const rowsMock = [
 ];
 
 export default function DataTable() {
+  let navigate = useNavigate();
   var userType = sessionStorage.getItem("userType");
   const [openModal, setOpenModal] = useState(false);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [nombre, setNombre] = useState();
   const [idProv, setIdProv] = useState();
+  const [idDelete, setIdDelete] = useState();
   var [rows, setRows] = useState([]);
   var [loading, setLoading] = useState(true);
 
@@ -149,6 +155,16 @@ export default function DataTable() {
     setOpenModal(false);
   };
 
+  const handleOpenConfirmDialog = (id, name) => {
+    setIdDelete(id);
+    setNombre(name);
+    setOpenConfirmDialog(true);
+  };
+
+  const handleCloseConfirmDialog = () => {
+    setOpenConfirmDialog(false);
+  };
+
   useEffect(() => {
     (async () => {
       const res = await getAllProv();
@@ -158,8 +174,22 @@ export default function DataTable() {
     })(setLoading(false));
   }, []);
 
-  const handleDeleteClick = (id) => () => {
+  const handleDeleteClick = (id) => {
     console.log(id);
+  };
+
+  const deleteById = (id) => {
+    (async () => {
+      console.warn("id", id);
+      const res = await deleteProvById(id);
+      console.error(res);
+      //reload();
+    })(setLoading(false));
+  };
+
+  const reload = () => {
+    navigate("/", { replace: false });
+    window.location.reload();
   };
 
   const columns = [
@@ -371,7 +401,8 @@ export default function DataTable() {
       headerName: "Acciones",
       width: 100,
       cellClassName: "actions",
-      getActions: ({ id }) => {
+      getActions: (params) => {
+        console.log(params.id, params.prov_asoc);
         if (userType === "administrador") {
           return [
             <Tooltip title="Editar">
@@ -379,7 +410,7 @@ export default function DataTable() {
                 icon={<EditIcon />}
                 label="Edit"
                 className="textPrimary"
-                onClick={handleEditClick(id, userType)}
+                onClick={handleEditClick(params.id, userType)}
                 color="success"
               />
             </Tooltip>,
@@ -387,7 +418,7 @@ export default function DataTable() {
               <GridActionsCellItem
                 icon={<DeleteIcon />}
                 label="Delete"
-                onClick={handleDeleteClick(id)}
+                onClick={() => handleOpenConfirmDialog(params.id)}
                 color="error"
               />
             </Tooltip>,
@@ -398,7 +429,7 @@ export default function DataTable() {
               <GridActionsCellItem
                 icon={<VisibilityTwoToneIcon />}
                 label="View"
-                onClick={handleEditClick(id, userType)}
+                onClick={handleEditClick(params.id, userType)}
               />
             </Tooltip>,
           ];
@@ -428,6 +459,14 @@ export default function DataTable() {
           pageSize={25}
           rowsPerPageOptions={[25]}
         />
+        <ConfirmDialog
+          open={openConfirmDialog}
+          close={handleCloseConfirmDialog}
+          func={() => deleteById(idDelete)}
+          title="Eliminar socio"
+          description={`Eliminar socio ${nombre}?`}
+        />
+        ;
         <Dialog
           open={openModal}
           maxWidth="lg"

@@ -244,7 +244,7 @@ export default function NavBar(props) {
                   <AddIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Añadir proveedor"
+                  primary="Añadir socio"
                   sx={{ opacity: openSideBar ? 1 : 0 }}
                 />
               </ListItemButton>

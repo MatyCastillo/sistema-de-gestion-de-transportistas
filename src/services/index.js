@@ -25,6 +25,18 @@ const createNewProv = async (data) => {
   }
 };
 
+const deleteProvById = async (id) => {
+  const data = { idProveedor: id };
+  try {
+    const petition = await axios.delete(`${API.URI}/api/v1/proveedores/`, {
+      data,
+    });
+    return petition;
+  } catch (err) {
+    return err;
+  }
+};
+
 const loginService = async ({ nombre, password }) => {
   const data = {
     nombre: nombre,
@@ -59,4 +71,11 @@ const uploadImage = async (file, name, id) => {
     return err;
   }
 };
-export { getAllProv, createNewProv, loginService, uploadImage, getProvById };
+export {
+  getAllProv,
+  createNewProv,
+  loginService,
+  uploadImage,
+  getProvById,
+  deleteProvById,
+};

@@ -26,7 +26,7 @@ import { useRef } from "react";
 import noImg from "../img/no-photo.png";
 import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/CancelTwoTone";
-import { IconButton } from "@mui/material";
+import { Checkbox, FormControlLabel, IconButton } from "@mui/material";
 import ImageForm from "./imageForm";
 import { useEffect } from "react";
 
@@ -45,7 +45,7 @@ const parceDateDb = (date) => {
     representation: "date",
   });
   var dateCell = parse(dateFormat, "yyyy-MM-dd", new Date());
-  return format(dateCell, "dd/MM/yyyy");
+  return dateCell;
   // } catch (e) {
   //   console.log(e);
   //   return "00/00/0000";
@@ -127,6 +127,7 @@ export default function IncriptionForm(props) {
   const [vtoHab, setVtoHab] = useState(null);
   const [vtoVtv, setVtoVtv] = useState(null);
   const [vtoCupon, setVtoCupon] = useState(null);
+  const [prorroga, setProrroga] = useState(false);
 
   const [dniTitF, setDniTitF] = useState({ preview: noImg });
   const [dniTitD, setDniTitD] = useState({ preview: noImg });
@@ -285,6 +286,11 @@ export default function IncriptionForm(props) {
     setOpenDialog(false);
   };
 
+  const handleChangeProrroga = (e) => {
+    setProrroga(!prorroga);
+    console.log(prorroga);
+  };
+
   const handleInputChange = (event, seter) => {
     seter(event.target.value);
     setData({
@@ -299,6 +305,12 @@ export default function IncriptionForm(props) {
   };
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (prorroga === false) {
+      setData({
+        ...data,
+        chofer_prorroga: "0000-00-00",
+      });
+    }
     // console.log(document.getElementById("nAsos").value);
     // if (data.nombreColegio == null || "") {
     //   setNombreFocused(true);
@@ -374,6 +386,10 @@ export default function IncriptionForm(props) {
         [dateId]: date,
       });
     }
+  };
+
+  const verfechas = () => {
+    console.warn(vtoRegistro, vtoProrroga, vtoPoliza, vtoHab, vtoVtv, vtoCupon);
   };
 
   const textInput = useRef(null);
@@ -572,9 +588,17 @@ export default function IncriptionForm(props) {
                     dateAdapter={AdapterDateFns}
                     adapterLocale={esLocale}
                   >
+                    <FormControlLabel
+                      control={<Checkbox defaultChecked size="small" />}
+                      onChange={handleChangeProrroga}
+                      label="Sin prorroga"
+                    />
                     <DatePicker
                       inputProps={{
-                        disabled: userType === "administrador" ? false : true,
+                        disabled:
+                          userType === "administrador" && prorroga
+                            ? false
+                            : true,
                       }}
                       variant="inline"
                       label="Vto Prorroga"
