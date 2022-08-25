@@ -20,15 +20,23 @@ import SaveIcon from "@mui/icons-material/Save";
 import esLocale from "date-fns/locale/es";
 import { format, formatISO, parse } from "date-fns";
 import AlertDialog from "./alertDialog";
-import { createNewProv, uploadImage, getProvById } from "../services";
+import {
+  createNewProv,
+  uploadImage,
+  getProvById,
+  updateProv,
+  getImagesById,
+} from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import noImg from "../img/no-photo.png";
 import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/CancelTwoTone";
+import SaveAsIcon from "@mui/icons-material/SaveAs";
 import { Checkbox, FormControlLabel, IconButton } from "@mui/material";
 import ImageForm from "./imageForm";
 import { useEffect } from "react";
+import API from "../utils/const";
 
 const theme = createTheme({
   palette: {
@@ -40,16 +48,15 @@ const theme = createTheme({
 });
 
 const parceDateDb = (date) => {
-  // try {
-  var dateFormat = formatISO(new Date(date), {
-    representation: "date",
-  });
-  var dateCell = parse(dateFormat, "yyyy-MM-dd", new Date());
-  return dateCell;
-  // } catch (e) {
-  //   console.log(e);
-  //   return "00/00/0000";
-  // }
+  try {
+    var dateFormat = formatISO(new Date(date), {
+      representation: "date",
+    });
+    var dateCell = parse(dateFormat, "yyyy-MM-dd", new Date());
+    return dateCell;
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export default function IncriptionForm(props) {
@@ -61,7 +68,21 @@ export default function IncriptionForm(props) {
     (async () => {
       if (props.id !== undefined) {
         const res = await getProvById(props.id);
-        console.log(res);
+        const imgs = await getImagesById(res[0].prov_asoc);
+        // setDniTitD(
+        //   imgs.data.forEach((e) =>
+        //     e.img_nombre === "dniTitD" ? e.img_path : ""
+        //   )
+        // );
+
+        imgs.data.forEach((e) =>
+          e.img_nombre === "dniTitD"
+            ? setDniTitD(`"${API.imgURI}/${e.img_path}"`)
+            : ""
+        );
+        console.log(imgs);
+        console.log(dniTitD);
+
         if (res) {
           setEdit(res[0]);
           setProv_asoc(res[0].prov_asoc);
@@ -81,18 +102,17 @@ export default function IncriptionForm(props) {
           setChofer_vehiculoCapacidad(res[0].chofer_vehiculoCapacidad);
           setChofer_habilitacion(res[0].chofer_habilitacion);
           setVtoRegistro(parceDateDb(res[0].chofer_registro));
-          setVtoProrroga(parceDateDb(res[0].chofer_prorroga));
           setVtoPoliza(parceDateDb(res[0].chofer_vtoPoliza));
           setVtoHab(parceDateDb(res[0].chofer_vtoHab));
           setVtoVtv(parceDateDb(res[0].chofer_vtoVtv));
           setVtoCupon(parceDateDb(res[0].chofer_cupon));
-          console.log("registro ISO", res[0].chofer_registro);
-          console.log("poliza ISO", res[0].chofer_vtoPoliza);
-          console.log("registro", parceDateDb(res[0].chofer_registro));
-          console.log("poliza", parceDateDb(res[0].chofer_vtoPoliza));
+          setVtoProrroga(
+            res[0].chofer_prorroga === "0000-00-00"
+              ? null
+              : parceDateDb(res[0].chofer_prorroga)
+          );
         }
       } else {
-        console.log("sin ID");
       }
     })(setEdit(false));
   }, []);
@@ -286,11 +306,6 @@ export default function IncriptionForm(props) {
     setOpenDialog(false);
   };
 
-  const handleChangeProrroga = (e) => {
-    setProrroga(!prorroga);
-    console.log(prorroga);
-  };
-
   const handleInputChange = (event, seter) => {
     seter(event.target.value);
     setData({
@@ -335,7 +350,12 @@ export default function IncriptionForm(props) {
     // } else {
     try {
       console.log(data);
-      const res = await createNewProv(data); //work!!!
+      let res;
+      if (props.id === undefined) {
+        res = await createNewProv(data); //work!!!
+      } else {
+        res = await updateProv(data); //  still not work
+      }
 
       guardarImg(dniTitF);
       guardarImg(dniTitD);
@@ -401,6 +421,9 @@ export default function IncriptionForm(props) {
           open={OpenDialog}
           close={handleCloseDialog}
           status={contentDialog}
+          title="Envio de formulario"
+          success="Formulario enviado exitosamente"
+          error="Error! El formulario no fué enviado"
         />
         <CssBaseline />
         <Box
@@ -588,17 +611,9 @@ export default function IncriptionForm(props) {
                     dateAdapter={AdapterDateFns}
                     adapterLocale={esLocale}
                   >
-                    <FormControlLabel
-                      control={<Checkbox defaultChecked size="small" />}
-                      onChange={handleChangeProrroga}
-                      label="Sin prorroga"
-                    />
                     <DatePicker
                       inputProps={{
-                        disabled:
-                          userType === "administrador" && prorroga
-                            ? false
-                            : true,
+                        disabled: userType === "administrador" ? false : true,
                       }}
                       variant="inline"
                       label="Vto Prorroga"
@@ -1712,10 +1727,12 @@ export default function IncriptionForm(props) {
                   type="submit"
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
-                  endIcon={<SaveIcon />}
+                  endIcon={
+                    props.id === undefined ? <SaveIcon /> : <SaveAsIcon />
+                  }
                   onClick={handleSubmit}
                 >
-                  Guardar
+                  {props.id === undefined ? "Guardar" : "Actualizar"}
                 </Button>
               </Grid>
             ) : (

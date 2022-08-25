@@ -24,6 +24,15 @@ const createNewProv = async (data) => {
     return err;
   }
 };
+const updateProv = async (data) => {
+  try {
+    const resp = await axios.put(`${API.URI}/api/v1/proveedores/`, data);
+    return resp;
+  } catch (err) {
+    // Handle Error Here
+    return err;
+  }
+};
 
 const deleteProvById = async (id) => {
   const data = { idProveedor: id };
@@ -71,6 +80,17 @@ const uploadImage = async (file, name, id) => {
     return err;
   }
 };
+
+const getImagesById = async (id) => {
+  try {
+    const petition = await axios.get(
+      `${API.URI}/api/v1/proveedores/image/${id}`
+    );
+    return petition.data;
+  } catch (err) {
+    return err;
+  }
+};
 export {
   getAllProv,
   createNewProv,
@@ -78,4 +98,6 @@ export {
   uploadImage,
   getProvById,
   deleteProvById,
+  updateProv,
+  getImagesById,
 };

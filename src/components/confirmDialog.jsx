@@ -16,15 +16,19 @@ const ConfirmDialog = (prop) => {
         aria-describedby="alert-dialog-description"
       >
         <DialogTitle id="alert-dialog-title">¿{prop.title}?</DialogTitle>
-        <DialogContent>
+        <DialogContent dividers>
           <DialogContentText id="alert-dialog-description">
             {prop.description}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={prop.close}>Cancelar</Button>
-          <Button onClick={prop.func} autoFocus>
-            Aceptar
+          <Button
+            color={prop.actionButtonColor ? prop.actionButtonColor : "inherit"}
+            onClick={prop.func}
+            autoFocus
+          >
+            {prop.actionButton}
           </Button>
         </DialogActions>
       </Dialog>

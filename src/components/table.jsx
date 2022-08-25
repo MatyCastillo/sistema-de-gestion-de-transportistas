@@ -24,6 +24,7 @@ import { parse, startOfToday, isAfter, formatISO, format } from "date-fns";
 import IncriptionForm from "./inscriptionCarrierForm";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "./confirmDialog";
+import AlertDialog from "./alertDialog";
 
 const theme = createTheme(
   {
@@ -136,11 +137,21 @@ export default function DataTable() {
   var userType = sessionStorage.getItem("userType");
   const [openModal, setOpenModal] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [contentDialog, setContentDialog] = useState("");
+  const [OpenDialog, setOpenDialog] = useState(false);
   const [nombre, setNombre] = useState();
   const [idProv, setIdProv] = useState();
   const [idDelete, setIdDelete] = useState();
   var [rows, setRows] = useState([]);
   var [loading, setLoading] = useState(true);
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
 
   const handleEditClick = (id, type) => () => {
     handleClickOpenModal();
@@ -180,10 +191,19 @@ export default function DataTable() {
 
   const deleteById = (id) => {
     (async () => {
-      console.warn("id", id);
+      handleCloseConfirmDialog();
       const res = await deleteProvById(id);
       console.error(res);
-      //reload();
+      if (res.data.status === "success") {
+        setContentDialog("success");
+        handleOpenDialog();
+        setTimeout(handleCloseDialog, 1000);
+        setTimeout(reload, 1000);
+      } else {
+        setContentDialog("error");
+        handleOpenDialog();
+        setTimeout(handleCloseDialog, 2000);
+      }
     })(setLoading(false));
   };
 
@@ -402,7 +422,6 @@ export default function DataTable() {
       width: 100,
       cellClassName: "actions",
       getActions: (params) => {
-        console.log(params.id, params.prov_asoc);
         if (userType === "administrador") {
           return [
             <Tooltip title="Editar">
@@ -418,7 +437,9 @@ export default function DataTable() {
               <GridActionsCellItem
                 icon={<DeleteIcon />}
                 label="Delete"
-                onClick={() => handleOpenConfirmDialog(params.id)}
+                onClick={() =>
+                  handleOpenConfirmDialog(params.id, params.row.prov_nombre)
+                }
                 color="error"
               />
             </Tooltip>,
@@ -464,9 +485,18 @@ export default function DataTable() {
           close={handleCloseConfirmDialog}
           func={() => deleteById(idDelete)}
           title="Eliminar socio"
-          description={`Eliminar socio ${nombre}?`}
+          description={`¿Eliminar socio ${nombre}?`}
+          actionButton="Eliminar"
+          actionButtonColor="error"
         />
-        ;
+        <AlertDialog
+          open={OpenDialog}
+          close={handleCloseDialog}
+          status={contentDialog}
+          title="Eliminar socio"
+          success="Socio eliminado exitosamente"
+          error="Error! No se pudo eliminar"
+        />
         <Dialog
           open={openModal}
           maxWidth="lg"

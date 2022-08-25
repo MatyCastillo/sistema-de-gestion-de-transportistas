@@ -23,12 +23,10 @@ export default function AlertDialog(prop) {
         onClose={prop.close}
         aria-describedby="alert-dialog-slide-description"
       >
-        <DialogTitle>{"Envio de formulario"}</DialogTitle>
+        <DialogTitle>{prop.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            {prop.status === "success"
-              ? " Formulario enviado exitosamente"
-              : " Error! formulario no enviado"}
+            {prop.status === "success" ? prop.success : prop.error}
           </DialogContentText>
           <Box
             noValidate
