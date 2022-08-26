@@ -37,6 +37,7 @@ import { Checkbox, FormControlLabel, IconButton } from "@mui/material";
 import ImageForm from "./imageForm";
 import { useEffect } from "react";
 import API from "../utils/const";
+import ImageDialog from "./imgDialog";
 
 const theme = createTheme({
   palette: {
@@ -69,20 +70,175 @@ export default function IncriptionForm(props) {
       if (props.id !== undefined) {
         const res = await getProvById(props.id);
         const imgs = await getImagesById(res[0].prov_asoc);
-        // setDniTitD(
-        //   imgs.data.forEach((e) =>
-        //     e.img_nombre === "dniTitD" ? e.img_path : ""
-        //   )
-        // );
 
-        imgs.data.forEach((e) =>
-          e.img_nombre === "dniTitD"
-            ? setDniTitD(`"${API.imgURI}/${e.img_path}"`)
-            : ""
+        setDniTitF(
+          imgs.data.filter((e) => e.img_nombre === "dniTitF").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "dniTitF" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
         );
-        console.log(imgs);
-        console.log(dniTitD);
+        setDniTitD(
+          imgs.data.filter((e) => e.img_nombre === "dniTitD").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "dniTitD" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setDniChofF(
+          imgs.data.filter((e) => e.img_nombre === "dniChofF").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "dniChofF" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setDniChofD(
+          imgs.data.filter((e) => e.img_nombre === "dniChofD").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "dniChofD" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setHab1(
+          imgs.data.filter((e) => e.img_nombre === "hab1").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `"${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "hab1" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setHab2(
+          imgs.data.filter((e) => e.img_nombre === "hab2").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "hab2" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setPol1(
+          imgs.data.filter((e) => e.img_nombre === "pol1").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "pol1" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setPol2(
+          imgs.data.filter((e) => e.img_nombre === "pol2").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "pol2" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setSeg1(
+          imgs.data.filter((e) => e.img_nombre === "seg1").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "seg1" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setSeg2(
+          imgs.data.filter((e) => e.img_nombre === "seg2").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "seg2" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setRegTitF(
+          imgs.data.filter((e) => e.img_nombre === "regTitF").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "regTitF" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setRegTitD(
+          imgs.data.filter((e) => e.img_nombre === "regTitD").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "regTitD" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setRegChofF(
+          imgs.data.filter((e) => e.img_nombre === "regChofF").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "regChofF" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setRegChofD(
+          imgs.data.filter((e) => e.img_nombre === "regChofD").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "regChofD" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
+        setVtv(
+          imgs.data.filter((e) => e.img_nombre === "vtv").length === 0
+            ? { preview: noImg }
+            : {
+                preview: `${API.imgURI}/${
+                  imgs.data.filter((e) =>
+                    e.img_nombre === "vtv" ? e.img_path : ""
+                  )[0].img_path
+                }`,
+              }
+        );
 
+        try {
+        } catch (error) {}
         if (res) {
           setEdit(res[0]);
           setProv_asoc(res[0].prov_asoc);
@@ -107,7 +263,9 @@ export default function IncriptionForm(props) {
           setVtoVtv(parceDateDb(res[0].chofer_vtoVtv));
           setVtoCupon(parceDateDb(res[0].chofer_cupon));
           setVtoProrroga(
-            res[0].chofer_prorroga === "0000-00-00"
+            res[0].chofer_prorroga === "0000-00-00" ||
+              res[0].chofer_prorroga === null ||
+              res[0].chofer_prorroga === undefined
               ? null
               : parceDateDb(res[0].chofer_prorroga)
           );
@@ -164,6 +322,8 @@ export default function IncriptionForm(props) {
   const [regChofF, setRegChofF] = useState({ preview: noImg });
   const [regChofD, setRegChofD] = useState({ preview: noImg });
   const [vtv, setVtv] = useState({ preview: noImg });
+
+  const [viewPreview, setViewPreview] = useState({});
 
   const [dniTitFPreview, setDniTitFImgPreview] = useState(noImg);
   const [dniTitDPreview, setDniTitDImgPreview] = useState(noImg);
@@ -408,8 +568,9 @@ export default function IncriptionForm(props) {
     }
   };
 
-  const verfechas = () => {
-    console.warn(vtoRegistro, vtoProrroga, vtoPoliza, vtoHab, vtoVtv, vtoCupon);
+  const handeClickOpenPreview = (e) => {
+    const elem = e.target.id;
+    console.log(elem);
   };
 
   const textInput = useRef(null);
@@ -417,6 +578,7 @@ export default function IncriptionForm(props) {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xl">
+        <ImageDialog image={viewPreview.image}></ImageDialog>
         <AlertDialog
           open={OpenDialog}
           close={handleCloseDialog}
@@ -937,6 +1099,7 @@ export default function IncriptionForm(props) {
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniTitF"
                     alt="no-photo"
