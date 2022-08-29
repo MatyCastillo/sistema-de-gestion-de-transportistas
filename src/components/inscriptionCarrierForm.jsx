@@ -323,7 +323,7 @@ export default function IncriptionForm(props) {
   const [regChofD, setRegChofD] = useState({ preview: noImg });
   const [vtv, setVtv] = useState({ preview: noImg });
 
-  const [viewPreview, setViewPreview] = useState({});
+  const [viewPreview, setViewPreview] = useState({ state: false });
 
   const [dniTitFPreview, setDniTitFImgPreview] = useState(noImg);
   const [dniTitDPreview, setDniTitDImgPreview] = useState(noImg);
@@ -452,7 +452,7 @@ export default function IncriptionForm(props) {
   const guardarImg = async (data) => {
     if (data.img_nombre !== undefined) {
       const resImg = await uploadImage(data.img, data.img_nombre, data.prov_id);
-      console.log("imagen guadada");
+      console.log("imagen guadada", data.img, data.img_nombre, data.prov_id);
     } else {
       console.log("imagen no guardada");
     }
@@ -537,17 +537,17 @@ export default function IncriptionForm(props) {
         setContentDialog("success");
         handleOpenDialog();
         setTimeout(handleCloseDialog, 1000);
-        setTimeout(reload, 1000);
+        //setTimeout(reload, 1000);
       } else {
         setContentDialog("error");
         handleOpenDialog();
-        setTimeout(handleCloseDialog, 2000);
+        //setTimeout(handleCloseDialog, 2000);
       }
     } catch (e) {
       console.log("error handle", e);
       setContentDialog("error");
       handleOpenDialog();
-      setTimeout(handleCloseDialog, 2000);
+      //setTimeout(handleCloseDialog, 2000);
     }
     // }
   };
@@ -567,10 +567,15 @@ export default function IncriptionForm(props) {
       });
     }
   };
-
+  const [imgUrl, setImgUrl] = useState("");
   const handeClickOpenPreview = (e) => {
-    const elem = e.target.id;
-    console.log(elem);
+    const elem = e.target.currentSrc;
+    setImgUrl(elem);
+    setViewPreview({ state: true });
+  };
+
+  const handeClickClosePreview = () => {
+    setViewPreview({ state: false });
   };
 
   const textInput = useRef(null);
@@ -578,7 +583,11 @@ export default function IncriptionForm(props) {
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xl">
-        <ImageDialog image={viewPreview.image}></ImageDialog>
+        <ImageDialog
+          image={imgUrl}
+          open={viewPreview.state}
+          close={handeClickClosePreview}
+        ></ImageDialog>
         <AlertDialog
           open={OpenDialog}
           close={handleCloseDialog}
@@ -1092,7 +1101,7 @@ export default function IncriptionForm(props) {
                         ? setDniTitF({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
@@ -1132,7 +1141,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      DNI Titular Frente
+                    </Button>
                   )}
                 </Grid>
                 <Grid>
@@ -1144,13 +1165,14 @@ export default function IncriptionForm(props) {
                         ? setDniTitD({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
@@ -1183,7 +1205,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      DNI Titular Dorso
+                    </Button>
                   )}
                 </Grid>
                 <Grid>
@@ -1196,13 +1230,14 @@ export default function IncriptionForm(props) {
                         ? setDniChofF({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
@@ -1235,7 +1270,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      DNI Chofer Frente
+                    </Button>
                   )}
                 </Grid>
                 <Grid>
@@ -1247,13 +1294,14 @@ export default function IncriptionForm(props) {
                         ? setDniChofD({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     name="dniFront"
@@ -1287,7 +1335,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      DNI Chofer Dorso
+                    </Button>
                   )}
                 </Grid>
                 {/**Inicio habilitacion foto 1 */}
@@ -1300,13 +1360,14 @@ export default function IncriptionForm(props) {
                         ? setHab1({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
@@ -1327,7 +1388,7 @@ export default function IncriptionForm(props) {
                       component="label"
                       variant="outlined"
                     >
-                      habilitación foto 1
+                      Habilitación foto 1
                       <input
                         hidden
                         id="hab1"
@@ -1339,7 +1400,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      Habilitacion 1
+                    </Button>
                   )}
                 </Grid>
                 {/**Fin habilitacion foto 1 */}
@@ -1353,13 +1426,14 @@ export default function IncriptionForm(props) {
                         ? setHab2({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
@@ -1392,7 +1466,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      Habilitacion 2
+                    </Button>
                   )}
                 </Grid>
                 {/**Fin habilitacion foto 2 */}
@@ -1406,13 +1492,14 @@ export default function IncriptionForm(props) {
                         ? setPol1({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
@@ -1445,7 +1532,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      Poliza 1
+                    </Button>
                   )}
                 </Grid>
                 {/**Fin poliza foto 1 */}
@@ -1459,13 +1558,14 @@ export default function IncriptionForm(props) {
                         ? setPol2({ preview: noImg })
                         : ""
                     }
-                    sx={{ zIndex: "tooltip" }}
+                    sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
                       <CancelIcon />
                     </Tooltip>
                   </IconButton>
                   <Avatar
+                    onClick={handeClickOpenPreview}
                     variant="rounded"
                     id="dniFront"
                     alt="no-photo"
@@ -1498,7 +1598,19 @@ export default function IncriptionForm(props) {
                       />
                     </Button>
                   ) : (
-                    <></>
+                    <Button
+                      sx={{
+                        m: 2,
+                        mt: -1,
+                        maxWidth: "100px",
+                        textAlign: "center",
+                        cursor: "context-menu",
+                      }}
+                      component="label"
+                      variant="text"
+                    >
+                      Poliza 2
+                    </Button>
                   )}
                 </Grid>
                 {/**Fin poliza foto 2 */}
@@ -1521,13 +1633,14 @@ export default function IncriptionForm(props) {
                       ? setSeg1({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
@@ -1548,7 +1661,7 @@ export default function IncriptionForm(props) {
                     component="label"
                     variant="outlined"
                   >
-                    seguro foto 1
+                    Seguro foto 1
                     <input
                       hidden
                       id="seg1"
@@ -1560,7 +1673,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    Seguro 1
+                  </Button>
                 )}
               </Grid>
               {/**Fin seguro foto 1 */}
@@ -1574,13 +1699,14 @@ export default function IncriptionForm(props) {
                       ? setSeg2({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
@@ -1613,7 +1739,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    seguro 2
+                  </Button>
                 )}
               </Grid>
               {/**Fin seguro foto 2 */}
@@ -1627,13 +1765,14 @@ export default function IncriptionForm(props) {
                       ? setRegTitF({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
@@ -1666,7 +1805,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    registro titular frente
+                  </Button>
                 )}
               </Grid>
               {/**Fin registro titular foto 1 */}
@@ -1680,13 +1831,14 @@ export default function IncriptionForm(props) {
                       ? setRegTitD({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
@@ -1719,7 +1871,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    registro titular dorso
+                  </Button>
                 )}
               </Grid>
               {/**Fin registro titular foto 2 */}
@@ -1733,13 +1897,14 @@ export default function IncriptionForm(props) {
                       ? setRegChofF({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
@@ -1772,7 +1937,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    registro chofer frente
+                  </Button>
                 )}
               </Grid>
               {/**Fin registro chofer foto 1 */}
@@ -1786,13 +1963,14 @@ export default function IncriptionForm(props) {
                       ? setRegChofD({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   alt="no-photo"
@@ -1825,7 +2003,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    registro chofer Dorso
+                  </Button>
                 )}
               </Grid>
               {/**Fin registro chofer foto 2 */}
@@ -1839,13 +2029,14 @@ export default function IncriptionForm(props) {
                       ? setVtv({ preview: noImg })
                       : ""
                   }
-                  sx={{ zIndex: "tooltip" }}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
                     <CancelIcon />
                   </Tooltip>
                 </IconButton>
                 <Avatar
+                  onClick={handeClickOpenPreview}
                   variant="rounded"
                   id="dniFront"
                   name="vtv"
@@ -1879,7 +2070,19 @@ export default function IncriptionForm(props) {
                     />
                   </Button>
                 ) : (
-                  <></>
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    informe vtv
+                  </Button>
                 )}
               </Grid>
               {/**Fin registro foto vtv */}

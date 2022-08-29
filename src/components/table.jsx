@@ -380,7 +380,11 @@ export default function DataTable() {
       headerName: "Prorroga al",
       width: 120,
       renderCell: (cellValues) => {
-        if (cellValues.value === "0000-00-00") {
+        if (
+          cellValues.value === "0000-00-00" ||
+          cellValues.value === null ||
+          cellValues.value === undefined
+        ) {
           return <div>Sin prorroga</div>;
         } else {
           var dateFormat = formatISO(new Date(cellValues.value), {
