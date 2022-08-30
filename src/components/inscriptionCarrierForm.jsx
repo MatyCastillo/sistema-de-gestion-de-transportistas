@@ -537,17 +537,17 @@ export default function IncriptionForm(props) {
         setContentDialog("success");
         handleOpenDialog();
         setTimeout(handleCloseDialog, 1000);
-        //setTimeout(reload, 1000);
+        setTimeout(reload, 1000);
       } else {
         setContentDialog("error");
         handleOpenDialog();
-        //setTimeout(handleCloseDialog, 2000);
+        setTimeout(handleCloseDialog, 2000);
       }
     } catch (e) {
       console.log("error handle", e);
       setContentDialog("error");
       handleOpenDialog();
-      //setTimeout(handleCloseDialog, 2000);
+      setTimeout(handleCloseDialog, 2000);
     }
     // }
   };

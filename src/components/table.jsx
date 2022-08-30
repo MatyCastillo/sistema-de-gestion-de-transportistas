@@ -25,6 +25,13 @@ import IncriptionForm from "./inscriptionCarrierForm";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "./confirmDialog";
 import AlertDialog from "./alertDialog";
+import { darken, lighten } from "@mui/material/styles";
+
+const getBackgroundColor = (color, mode) =>
+  mode === "dark" ? darken(color, 0.6) : lighten(color, 0.6);
+
+const getHoverBackgroundColor = (color, mode) =>
+  mode === "dark" ? darken(color, 0.5) : lighten(color, 0.5);
 
 const theme = createTheme(
   {
@@ -134,7 +141,9 @@ const rowsMock = [
 
 export default function DataTable() {
   let navigate = useNavigate();
+  var hoy = startOfToday();
   var userType = sessionStorage.getItem("userType");
+  const [expired, setExpired] = useState("NotExpired");
   const [openModal, setOpenModal] = useState(false);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [contentDialog, setContentDialog] = useState("");
@@ -211,7 +220,6 @@ export default function DataTable() {
     navigate("/", { replace: false });
     window.location.reload();
   };
-
   const columns = [
     { field: "id", headerName: "#", width: 50 },
     { field: "prov_asoc", headerName: "Asoc", width: 70 },
@@ -464,7 +472,36 @@ export default function DataTable() {
   ];
 
   return (
-    <Paper elevation={3} sx={{ m: 2 }} style={{ height: 750 }}>
+    <Paper
+      elevation={3}
+      sx={{
+        m: 2,
+        height: 650,
+        "& .super-app-theme--NotExpired": {
+          bgcolor: (theme) =>
+            getBackgroundColor(theme.palette.success.main, theme.palette.mode),
+          "&:hover": {
+            bgcolor: (theme) =>
+              getHoverBackgroundColor(
+                theme.palette.success.main,
+                theme.palette.mode
+              ),
+          },
+        },
+        "& .super-app-theme--Expired": {
+          bgcolor: (theme) =>
+            getBackgroundColor(theme.palette.error.main, theme.palette.mode),
+          "&:hover": {
+            bgcolor: (theme) =>
+              getHoverBackgroundColor(
+                theme.palette.error.main,
+                theme.palette.mode
+              ),
+          },
+        },
+      }}
+      style={{}}
+    >
       <ThemeProvider theme={theme}>
         <DataGrid
           initialState={{
@@ -479,10 +516,67 @@ export default function DataTable() {
             },
           }}
           rows={rows}
-          //loading={loading}
+          loading={loading}
           columns={columns}
           pageSize={25}
           rowsPerPageOptions={[25]}
+          selectRow={2}
+          getRowClassName={(params) =>
+            `super-app-theme--${
+              isAfter(
+                parse(
+                  formatISO(new Date(params.row.chofer_vtoHab), {
+                    representation: "date",
+                  }),
+                  "yyyy-MM-dd",
+                  new Date()
+                ),
+                hoy
+              ) &&
+              isAfter(
+                parse(
+                  formatISO(new Date(params.row.chofer_vtoPoliza), {
+                    representation: "date",
+                  }),
+                  "yyyy-MM-dd",
+                  new Date()
+                ),
+                hoy
+              ) &&
+              isAfter(
+                parse(
+                  formatISO(new Date(params.row.chofer_vtoVtv), {
+                    representation: "date",
+                  }),
+                  "yyyy-MM-dd",
+                  new Date()
+                ),
+                hoy
+              ) &&
+              isAfter(
+                parse(
+                  formatISO(new Date(params.row.chofer_cupon), {
+                    representation: "date",
+                  }),
+                  "yyyy-MM-dd",
+                  new Date()
+                ),
+                hoy
+              ) &&
+              isAfter(
+                parse(
+                  formatISO(new Date(params.row.chofer_registro), {
+                    representation: "date",
+                  }),
+                  "yyyy-MM-dd",
+                  new Date()
+                ),
+                hoy
+              )
+                ? "NotExpired"
+                : "Expired"
+            }`
+          }
         />
         <ConfirmDialog
           open={openConfirmDialog}

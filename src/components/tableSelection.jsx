@@ -1,0 +1,54 @@
+import * as React from "react";
+import Box from "@mui/material/Box";
+import { DataGrid } from "@mui/x-data-grid";
+import { useDemoData } from "@mui/x-data-grid-generator";
+import { darken, lighten } from "@mui/material/styles";
+
+const getBackgroundColor = (color, mode) =>
+  mode === "dark" ? darken(color, 0.6) : lighten(color, 0.6);
+
+const getHoverBackgroundColor = (color, mode) =>
+  mode === "dark" ? darken(color, 0.5) : lighten(color, 0.5);
+
+export default function StylingRowsGrid() {
+  const { data } = useDemoData({
+    dataSet: "Commodity",
+    rowLength: 100,
+  });
+
+  return (
+    <Box
+      sx={{
+        height: 650,
+        width: "100%",
+        "& .super-app-theme--NotExpired": {
+          bgcolor: (theme) =>
+            getBackgroundColor(theme.palette.success.main, theme.palette.mode),
+          "&:hover": {
+            bgcolor: (theme) =>
+              getHoverBackgroundColor(
+                theme.palette.success.main,
+                theme.palette.mode
+              ),
+          },
+        },
+        "& .super-app-theme--Expired": {
+          bgcolor: (theme) =>
+            getBackgroundColor(theme.palette.error.main, theme.palette.mode),
+          "&:hover": {
+            bgcolor: (theme) =>
+              getHoverBackgroundColor(
+                theme.palette.error.main,
+                theme.palette.mode
+              ),
+          },
+        },
+      }}
+    >
+      <DataGrid
+        {...data}
+        getRowClassName={(params) => `super-app-theme--${params.row.status}`}
+      />
+    </Box>
+  );
+}
