@@ -14,9 +14,17 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import loginImg from "../img/logoUteam.jpg";
 import { deepOrange } from "@mui/material/colors";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Alert } from "@mui/material";
+import {
+  Alert,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+} from "@mui/material";
 import useUser from "../hooks/useUser";
 import { useEffect, useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const theme = createTheme({
   palette: {
@@ -32,6 +40,7 @@ export default function SignIn() {
   const navigate = useNavigate();
   const { isLoginLoading, hasLoginError, login, isLogged } = useUser();
   const [nombre, setNombre] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
 
   // if (location.state !== null || "") {
@@ -46,6 +55,10 @@ export default function SignIn() {
     event.preventDefault();
     login({ nombre, password });
     const data = new FormData(event.currentTarget);
+  };
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -90,7 +103,7 @@ export default function SignIn() {
                 autoFocus
                 onChange={(e) => setNombre(e.target.value)}
               />
-              <TextField
+              {/* <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -100,11 +113,35 @@ export default function SignIn() {
                 id="password"
                 autoComplete="current-password"
                 onChange={(e) => setPassword(e.target.value)}
-              />
-              <FormControlLabel
+              /> */}
+              <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">
+                  Contraseña
+                </InputLabel>
+                <OutlinedInput
+                  id="outlined-adornment-password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                  label="Contraseña"
+                />
+              </FormControl>
+              {/* <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Recordar contraseña"
-              />
+              /> */}
               <Button
                 type="submit"
                 fullWidth

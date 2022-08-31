@@ -113,7 +113,7 @@ export default function SignIn() {
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
+            <FormControl sx={{ mt: 2, width: "100%" }} variant="outlined">
               <InputLabel htmlFor="outlined-adornment-password">
                 Contraseña
               </InputLabel>
@@ -136,11 +136,11 @@ export default function SignIn() {
                 }
                 label="Contraseña"
               />
-            </FormControl> */}
-            <FormControlLabel
+            </FormControl>
+            {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Recordar contraseña"
-            />
+            /> */}
             <Button
               type="submit"
               fullWidth

@@ -224,7 +224,7 @@ export default function NavBar(props) {
               disabled={userType && userType === "administrador" ? false : true}
               key="form"
               disablePadding
-              sx={{ display: "block" }}
+              sx={isMobile ? { display: "block", mt: 5 } : { display: "block" }}
               selected
             >
               <ListItemButton
