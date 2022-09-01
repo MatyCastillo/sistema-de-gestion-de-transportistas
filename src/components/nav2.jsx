@@ -161,8 +161,12 @@ export default function NavBar(props) {
             >
               <MenuIcon />
             </IconButton>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Sistema interno UTEAM
+            <Typography
+              variant={isMobile ? "body1" : "h6"}
+              component="div"
+              sx={{ flexGrow: 1 }}
+            >
+              Sistema {isMobile ? <br /> : ""} interno UTEAM
             </Typography>
             <Tooltip
               title={

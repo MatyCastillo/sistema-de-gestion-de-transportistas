@@ -55,7 +55,7 @@ const loginService = async ({ nombre, password }) => {
     const response = await axios.post(`${API.URI}/api/v1/auth/login`, data);
     return response.data;
   } catch (error) {
-    throw new Error("response is not ok");
+    throw error;
   }
 };
 

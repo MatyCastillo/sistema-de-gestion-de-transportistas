@@ -38,10 +38,12 @@ const theme = createTheme({
 export default function SignIn() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoginLoading, hasLoginError, login, isLogged } = useUser();
+  const { isLoginLoading, hasLoginError, login, isLogged, statusMessage } =
+    useUser();
   const [nombre, setNombre] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  //const [statusMessage, setStatusMessage] = useState("");
 
   // if (location.state !== null || "") {
   //   console.log(location.state.message);
@@ -54,6 +56,7 @@ export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
     login({ nombre, password });
+
     const data = new FormData(event.currentTarget);
   };
 
@@ -89,7 +92,7 @@ export default function SignIn() {
               sx={{ mt: 1 }}
             >
               {hasLoginError ? (
-                <Alert severity="error">Credeciales invalidas</Alert>
+                <Alert severity="error">{statusMessage}</Alert>
               ) : (
                 <></>
               )}

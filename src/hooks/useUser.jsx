@@ -5,7 +5,11 @@ import { loginService } from "../services";
 export default function useUser() {
   const { jwt, setJWT } = useContext(Context);
   const [type, setType] = useState();
-  const [state, setState] = useState({ loading: false, error: false });
+  const [state, setState] = useState({
+    loading: false,
+    error: false,
+    message: "",
+  });
 
   const login = useCallback(
     ({ nombre, password }) => {
@@ -23,8 +27,11 @@ export default function useUser() {
         })
         .catch((error) => {
           window.sessionStorage.removeItem("jwt");
-          setState({ loading: false, error: true });
-          console.error(error);
+          setState({
+            loading: false,
+            error: true,
+            message: error.response.data.message,
+          });
         });
     },
     [setJWT]
@@ -36,10 +43,11 @@ export default function useUser() {
   }, [setJWT]);
   return {
     isLogged: Boolean(jwt),
+    statusMessage: state.message,
     isLoginLoading: state.loading,
     hasLoginError: state.error,
     tipoDeUsuario: type,
-    jwt: jwt,
+    //jwt: jwt,
     login,
     logout,
   };
