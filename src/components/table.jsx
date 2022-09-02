@@ -420,11 +420,11 @@ export default function DataTable() {
       },
     },
     { field: "chofer_cuitSocio", headerName: "CUIT Socio", width: 150 },
-    {
-      field: "prov_nombre",
-      headerName: "Apellido y Nombre Titular",
-      width: 200,
-    },
+    // {
+    //   field: "prov_nombre",
+    //   headerName: "Apellido y Nombre Titular",
+    //   width: 200,
+    // },
     { field: "chofer_cuitTitular", headerName: "CUIT Titular", width: 120 },
     { field: "chofer_anioMod", headerName: "Año Mod", width: 100 },
     {
@@ -516,67 +516,11 @@ export default function DataTable() {
             },
           }}
           rows={rows}
-          loading={loading}
+          //loading={loading}
           columns={columns}
           pageSize={25}
           rowsPerPageOptions={[25]}
           selectRow={2}
-          getRowClassName={(params) =>
-            `super-app-theme--${
-              isAfter(
-                parse(
-                  formatISO(new Date(params.row.chofer_vtoHab), {
-                    representation: "date",
-                  }),
-                  "yyyy-MM-dd",
-                  new Date()
-                ),
-                hoy
-              ) &&
-              isAfter(
-                parse(
-                  formatISO(new Date(params.row.chofer_vtoPoliza), {
-                    representation: "date",
-                  }),
-                  "yyyy-MM-dd",
-                  new Date()
-                ),
-                hoy
-              ) &&
-              isAfter(
-                parse(
-                  formatISO(new Date(params.row.chofer_vtoVtv), {
-                    representation: "date",
-                  }),
-                  "yyyy-MM-dd",
-                  new Date()
-                ),
-                hoy
-              ) &&
-              isAfter(
-                parse(
-                  formatISO(new Date(params.row.chofer_cupon), {
-                    representation: "date",
-                  }),
-                  "yyyy-MM-dd",
-                  new Date()
-                ),
-                hoy
-              ) &&
-              isAfter(
-                parse(
-                  formatISO(new Date(params.row.chofer_registro), {
-                    representation: "date",
-                  }),
-                  "yyyy-MM-dd",
-                  new Date()
-                ),
-                hoy
-              )
-                ? "NotExpired"
-                : "Expired"
-            }`
-          }
         />
         <ConfirmDialog
           open={openConfirmDialog}
