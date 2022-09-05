@@ -26,7 +26,7 @@ export default function AlertDialog(prop) {
         <DialogTitle>{prop.title}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-slide-description">
-            {prop.status === "success" ? prop.success : prop.error}
+            {prop.message}
           </DialogContentText>
           <Box
             noValidate

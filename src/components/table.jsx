@@ -536,7 +536,7 @@ export default function DataTable() {
           close={handleCloseDialog}
           status={contentDialog}
           title="Eliminar socio"
-          success="Socio eliminado exitosamente"
+          message="Socio eliminado exitosamente"
           error="Error! No se pudo eliminar"
         />
         <Dialog

@@ -71,172 +71,174 @@ export default function IncriptionForm(props) {
         const res = await getProvById(props.id);
         const imgs = await getImagesById(res[0].prov_asoc);
 
-        setDniTitF(
-          imgs.data.filter((e) => e.img_nombre === "dniTitF").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "dniTitF" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setDniTitD(
-          imgs.data.filter((e) => e.img_nombre === "dniTitD").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "dniTitD" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setDniChofF(
-          imgs.data.filter((e) => e.img_nombre === "dniChofF").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "dniChofF" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setDniChofD(
-          imgs.data.filter((e) => e.img_nombre === "dniChofD").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "dniChofD" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setHab1(
-          imgs.data.filter((e) => e.img_nombre === "hab1").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `"${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "hab1" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setHab2(
-          imgs.data.filter((e) => e.img_nombre === "hab2").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "hab2" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setPol1(
-          imgs.data.filter((e) => e.img_nombre === "pol1").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "pol1" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setPol2(
-          imgs.data.filter((e) => e.img_nombre === "pol2").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "pol2" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setSeg1(
-          imgs.data.filter((e) => e.img_nombre === "seg1").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "seg1" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setSeg2(
-          imgs.data.filter((e) => e.img_nombre === "seg2").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "seg2" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setRegTitF(
-          imgs.data.filter((e) => e.img_nombre === "regTitF").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "regTitF" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setRegTitD(
-          imgs.data.filter((e) => e.img_nombre === "regTitD").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "regTitD" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setRegChofF(
-          imgs.data.filter((e) => e.img_nombre === "regChofF").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "regChofF" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setRegChofD(
-          imgs.data.filter((e) => e.img_nombre === "regChofD").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "regChofD" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
-        setVtv(
-          imgs.data.filter((e) => e.img_nombre === "vtv").length === 0
-            ? { preview: noImg }
-            : {
-                preview: `${API.imgURI}/${
-                  imgs.data.filter((e) =>
-                    e.img_nombre === "vtv" ? e.img_path : ""
-                  )[0].img_path
-                }`,
-              }
-        );
+        try {
+          setDniTitF(
+            imgs.data.filter((e) => e.img_nombre === "dniTitF").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "dniTitF" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
 
+          setDniTitD(
+            imgs.data.filter((e) => e.img_nombre === "dniTitD").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "dniTitD" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setDniChofF(
+            imgs.data.filter((e) => e.img_nombre === "dniChofF").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "dniChofF" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setDniChofD(
+            imgs.data.filter((e) => e.img_nombre === "dniChofD").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "dniChofD" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setHab1(
+            imgs.data.filter((e) => e.img_nombre === "hab1").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `"${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "hab1" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setHab2(
+            imgs.data.filter((e) => e.img_nombre === "hab2").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "hab2" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setPol1(
+            imgs.data.filter((e) => e.img_nombre === "pol1").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "pol1" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setPol2(
+            imgs.data.filter((e) => e.img_nombre === "pol2").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "pol2" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setSeg1(
+            imgs.data.filter((e) => e.img_nombre === "seg1").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "seg1" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setSeg2(
+            imgs.data.filter((e) => e.img_nombre === "seg2").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "seg2" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setRegTitF(
+            imgs.data.filter((e) => e.img_nombre === "regTitF").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "regTitF" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setRegTitD(
+            imgs.data.filter((e) => e.img_nombre === "regTitD").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "regTitD" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setRegChofF(
+            imgs.data.filter((e) => e.img_nombre === "regChofF").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "regChofF" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setRegChofD(
+            imgs.data.filter((e) => e.img_nombre === "regChofD").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "regChofD" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setVtv(
+            imgs.data.filter((e) => e.img_nombre === "vtv").length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "vtv" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+        } catch {}
         try {
         } catch (error) {}
         if (res) {
@@ -297,7 +299,7 @@ export default function IncriptionForm(props) {
 
   const [data, setData] = useState({});
   const [OpenDialog, setOpenDialog] = useState(false);
-  const [contentDialog, setContentDialog] = useState("");
+  const [contentDialog, setContentDialog] = useState({});
 
   const [vtoRegistro, setVtoRegistro] = useState(null);
   const [vtoProrroga, setVtoProrroga] = useState(null);
@@ -479,6 +481,7 @@ export default function IncriptionForm(props) {
     window.location.reload();
   };
   const handleSubmit = async (event) => {
+    let res;
     event.preventDefault();
     if (prorroga === false) {
       setData({
@@ -510,7 +513,7 @@ export default function IncriptionForm(props) {
     // } else {
     try {
       console.log(data);
-      let res;
+
       if (props.id === undefined) {
         res = await createNewProv(data); //work!!!
       } else {
@@ -534,18 +537,30 @@ export default function IncriptionForm(props) {
       guardarImg(vtv);
 
       if (res.data.status === "success") {
-        setContentDialog("success");
+        setContentDialog({
+          title: "Guardado exitoso",
+          status: res.data.status,
+          message: res.data.message,
+        });
         handleOpenDialog();
         setTimeout(handleCloseDialog, 1000);
         setTimeout(reload, 1000);
       } else {
-        setContentDialog("error");
+        setContentDialog({
+          title: "Error durante el guardado",
+          status: res.data.status,
+          message: res.data.message,
+        });
         handleOpenDialog();
         setTimeout(handleCloseDialog, 2000);
       }
     } catch (e) {
       console.log("error handle", e);
-      setContentDialog("error");
+      setContentDialog({
+        title: "Error durante el guardado",
+        status: res.data.status,
+        message: res.data.message,
+      });
       handleOpenDialog();
       setTimeout(handleCloseDialog, 2000);
     }
@@ -591,10 +606,9 @@ export default function IncriptionForm(props) {
         <AlertDialog
           open={OpenDialog}
           close={handleCloseDialog}
-          status={contentDialog}
-          title="Envio de formulario"
-          success="Formulario enviado exitosamente"
-          error="Error! El formulario no fué enviado"
+          status={contentDialog.status}
+          message={contentDialog.message}
+          title={contentDialog.title}
         />
         <CssBaseline />
         <Box
