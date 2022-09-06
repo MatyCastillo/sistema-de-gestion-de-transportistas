@@ -24,9 +24,9 @@ const createNewProv = async (data) => {
     return err;
   }
 };
-const updateProv = async (data) => {
+const updateProv = async (data, id) => {
   try {
-    const resp = await axios.put(`${API.URI}/api/v1/proveedores/`, data);
+    const resp = await axios.put(`${API.URI}/api/v1/proveedores/${id}`, data);
     return resp;
   } catch (err) {
     // Handle Error Here

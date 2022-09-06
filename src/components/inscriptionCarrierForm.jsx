@@ -70,7 +70,9 @@ export default function IncriptionForm(props) {
       if (props.id !== undefined) {
         const res = await getProvById(props.id);
         const imgs = await getImagesById(res[0].prov_asoc);
-
+        for (const property in res[0]) {
+          setData(res[0]);
+        }
         try {
           setDniTitF(
             imgs.data.filter((e) => e.img_nombre === "dniTitF").length === 0
@@ -121,13 +123,14 @@ export default function IncriptionForm(props) {
             imgs.data.filter((e) => e.img_nombre === "hab1").length === 0
               ? { preview: noImg }
               : {
-                  preview: `"${API.imgURI}/${
+                  preview: `${API.imgURI}/${
                     imgs.data.filter((e) =>
                       e.img_nombre === "hab1" ? e.img_path : ""
                     )[0].img_path
                   }`,
                 }
           );
+          console.log(hab1);
           setHab2(
             imgs.data.filter((e) => e.img_nombre === "hab2").length === 0
               ? { preview: noImg }
@@ -483,43 +486,89 @@ export default function IncriptionForm(props) {
   const handleSubmit = async (event) => {
     let res;
     event.preventDefault();
-    if (prorroga === false) {
-      setData({
-        ...data,
-        chofer_prorroga: "0000-00-00",
-      });
-    }
-    // console.log(document.getElementById("nAsos").value);
-    // if (data.nombreColegio == null || "") {
-    //   setNombreFocused(true);
-    // } else if (data.direccColegio == null || "") {
-    //   setDireccFocus(true);
-    // } else if (data.localidadColegio == null || "") {
-    //   setLocalidadFocus(true);
-    // } else if (data.emailColegio == null || "") {
-    //   setEmailFocus(true);
-    // } else if (data.telColegio == null || "") {
-    //   setTelFocus(true);
-    // } else if (data.nombreDirectivo == null || "") {
-    //   setNombreDFocus(true);
-    // } else if (data.apellidoDirectivo == null || "") {
-    //   setApellidoDFocus(true);
-    // } else if (data.nombreTransportista == null || "") {
-    //   setTansportFocus(true);
-    // } else if (data.dateViaje == null || "") {
-    //   setDateFocus(true);
-    // } else if (data.timeViaje == null || "") {
-    //   setTimeFocus(true);
-    // } else {
-    try {
-      console.log(data);
-
-      if (props.id === undefined) {
-        res = await createNewProv(data); //work!!!
-      } else {
-        res = await updateProv(data); //  still not work
+    if (props.id === undefined) {
+      if (prorroga === false) {
+        setData({
+          ...data,
+          chofer_prorroga: "0000-00-00",
+        });
       }
+      // console.log(document.getElementById("nAsos").value);
+      // if (data.nombreColegio == null || "") {
+      //   setNombreFocused(true);
+      // } else if (data.direccColegio == null || "") {
+      //   setDireccFocus(true);
+      // } else if (data.localidadColegio == null || "") {
+      //   setLocalidadFocus(true);
+      // } else if (data.emailColegio == null || "") {
+      //   setEmailFocus(true);
+      // } else if (data.telColegio == null || "") {
+      //   setTelFocus(true);
+      // } else if (data.nombreDirectivo == null || "") {
+      //   setNombreDFocus(true);
+      // } else if (data.apellidoDirectivo == null || "") {
+      //   setApellidoDFocus(true);
+      // } else if (data.nombreTransportista == null || "") {
+      //   setTansportFocus(true);
+      // } else if (data.dateViaje == null || "") {
+      //   setDateFocus(true);
+      // } else if (data.timeViaje == null || "") {
+      //   setTimeFocus(true);
+      // } else {
+      try {
+        console.log(data);
 
+        if (props.id === undefined) {
+          res = await createNewProv(data); //work!!!
+        }
+
+        guardarImg(dniTitF);
+        guardarImg(dniTitD);
+        guardarImg(dniChofF);
+        guardarImg(dniChofD);
+        guardarImg(hab1);
+        guardarImg(hab2);
+        guardarImg(pol1);
+        guardarImg(pol2);
+        guardarImg(seg1);
+        guardarImg(seg2);
+        guardarImg(regTitF);
+        guardarImg(regTitD);
+        guardarImg(regChofF);
+        guardarImg(regChofD);
+        guardarImg(vtv);
+
+        if (res.data.status === "success") {
+          setContentDialog({
+            title: "Guardado exitoso",
+            status: res.data.status,
+            message: res.data.message,
+          });
+          handleOpenDialog();
+          setTimeout(handleCloseDialog, 1000);
+          setTimeout(reload, 1000);
+        } else {
+          setContentDialog({
+            title: "Error durante el guardado",
+            status: res.data.status,
+            message: res.data.message,
+          });
+          handleOpenDialog();
+          setTimeout(handleCloseDialog, 2000);
+        }
+      } catch (e) {
+        console.log("error handle", e);
+        setContentDialog({
+          title: "Error durante el guardado",
+          status: res.data.status,
+          message: res.data.message,
+        });
+        handleOpenDialog();
+        setTimeout(handleCloseDialog, 2000);
+      }
+      // }
+    } else {
+      console.log(data);
       guardarImg(dniTitF);
       guardarImg(dniTitD);
       guardarImg(dniChofF);
@@ -535,7 +584,7 @@ export default function IncriptionForm(props) {
       guardarImg(regChofF);
       guardarImg(regChofD);
       guardarImg(vtv);
-
+      res = await updateProv(data, props.id);
       if (res.data.status === "success") {
         setContentDialog({
           title: "Guardado exitoso",
@@ -554,17 +603,7 @@ export default function IncriptionForm(props) {
         handleOpenDialog();
         setTimeout(handleCloseDialog, 2000);
       }
-    } catch (e) {
-      console.log("error handle", e);
-      setContentDialog({
-        title: "Error durante el guardado",
-        status: res.data.status,
-        message: res.data.message,
-      });
-      handleOpenDialog();
-      setTimeout(handleCloseDialog, 2000);
     }
-    // }
   };
 
   const dateOnChange = (date, set, dateId) => {
@@ -1340,8 +1379,8 @@ export default function IncriptionForm(props) {
                       DNI Chofer Dorso
                       <input
                         hidden
-                        id="dniFront"
-                        name="dniFront"
+                        id="dniChofD"
+                        name="dniChofD"
                         accept="image/*"
                         multiple
                         type="file"

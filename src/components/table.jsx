@@ -521,6 +521,7 @@ export default function DataTable() {
           pageSize={25}
           rowsPerPageOptions={[25]}
           selectRow={2}
+          getRowClassName={(params) => `super-app-theme--${params.row.expire}`}
         />
         <ConfirmDialog
           open={openConfirmDialog}

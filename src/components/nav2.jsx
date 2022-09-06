@@ -33,6 +33,8 @@ import useUser from "../hooks/useUser";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import TabUnselectedIcon from "@mui/icons-material/TabUnselected";
+import DescriptionIcon from "@mui/icons-material/Description";
+import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 
 const drawerWidth = 240;
 
@@ -258,6 +260,27 @@ export default function NavBar(props) {
           <List>
             <ListItem key="reports" disablePadding sx={{ display: "block" }}>
               <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: openSideBar ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: openSideBar ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <DescriptionIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Planilla de documentación"
+                  sx={{ opacity: openSideBar ? 1 : 0 }}
+                />
+              </ListItemButton>
+              <ListItemButton
                 disabled
                 sx={{
                   minHeight: 48,
@@ -272,10 +295,10 @@ export default function NavBar(props) {
                     justifyContent: "center",
                   }}
                 >
-                  <QueryStatsIcon />
+                  <LocalPrintshopIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Reportes"
+                  primary="Impresiones"
                   sx={{ opacity: openSideBar ? 1 : 0 }}
                 />
               </ListItemButton>
@@ -299,7 +322,7 @@ export default function NavBar(props) {
                   <AssessmentIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Estadísticas"
+                  primary="Reporte 1"
                   sx={{ opacity: openSideBar ? 1 : 0 }}
                 />
               </ListItemButton>
@@ -323,7 +346,7 @@ export default function NavBar(props) {
                   <TabUnselectedIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Incompletos"
+                  primary="Reporte 2"
                   sx={{ opacity: openSideBar ? 1 : 0 }}
                 />
               </ListItemButton>
