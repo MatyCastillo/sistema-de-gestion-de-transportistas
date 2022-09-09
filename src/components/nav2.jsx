@@ -35,6 +35,9 @@ import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import TabUnselectedIcon from "@mui/icons-material/TabUnselected";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
+import LogoUteam from "../img/logo-uteam-transparente.png";
+import AvatarNab from "./avatarNab";
+import noAvatar from "../img/no-avatar.png";
 
 const drawerWidth = 240;
 
@@ -163,6 +166,11 @@ export default function NavBar(props) {
             >
               <MenuIcon />
             </IconButton>
+            <img
+              src={LogoUteam}
+              alt="logo"
+              style={{ width: "50px", marginRight: " 10px" }}
+            />
             <Typography
               variant={isMobile ? "body1" : "h6"}
               component="div"
@@ -170,6 +178,7 @@ export default function NavBar(props) {
             >
               Sistema {isMobile ? <br /> : ""} interno UTEAM
             </Typography>
+            <AvatarNab img={noAvatar} user={userName} />
             <Tooltip
               title={
                 userType && userType === "administrador"

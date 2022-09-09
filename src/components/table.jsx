@@ -152,7 +152,7 @@ export default function DataTable() {
   const [idProv, setIdProv] = useState();
   const [idDelete, setIdDelete] = useState();
   var [rows, setRows] = useState([]);
-  var [loading, setLoading] = useState(true);
+  var [onLoading, setLoading] = useState(true);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -516,7 +516,7 @@ export default function DataTable() {
             },
           }}
           rows={rows}
-          //loading={loading}
+          loading={onLoading}
           columns={columns}
           pageSize={25}
           rowsPerPageOptions={[25]}

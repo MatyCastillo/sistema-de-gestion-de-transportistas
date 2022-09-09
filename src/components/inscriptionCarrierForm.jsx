@@ -455,11 +455,18 @@ export default function IncriptionForm(props) {
   };
 
   const guardarImg = async (data) => {
-    if (data.img_nombre !== undefined) {
-      const resImg = await uploadImage(data.img, data.img_nombre, data.prov_id);
-      console.log("imagen guadada", data.img, data.img_nombre, data.prov_id);
-    } else {
-      console.log("imagen no guardada");
+    try {
+      if (data.img_nombre !== undefined) {
+        const resImg = await uploadImage(
+          data.img,
+          data.img_nombre,
+          data.prov_id
+        );
+        console.log("imagen guadada", data.img, data.img_nombre, data.prov_id);
+        return resImg.status;
+      }
+    } catch (error) {
+      return error;
     }
   };
 
@@ -670,7 +677,7 @@ export default function IncriptionForm(props) {
             <Grid container spacing={2}>
               <Grid item xs={12} lg={6}>
                 <Typography component="h3" variant="h6">
-                  Datos del proveedor
+                  Datos del titular
                 </Typography>
                 {/* <Button
                   onClick={() => {
@@ -744,7 +751,7 @@ export default function IncriptionForm(props) {
                   id="chofer_cuitTitular"
                   name="chofer_cuitTitular"
                   value={chofer_cuitTitular}
-                  label="CUIT"
+                  label="CUIT/CUIL"
                   size="small"
                   inputProps={{
                     disabled: userType === "administrador" ? false : true,
@@ -798,7 +805,7 @@ export default function IncriptionForm(props) {
                     id="chofer_cuitSocio"
                     name="chofer_cuitSocio"
                     value={chofer_cuitSocio}
-                    label="CUIT"
+                    label="CUIT/CUIL"
                     size="small"
                     inputProps={{
                       disabled: userType === "administrador" ? false : true,
@@ -891,7 +898,7 @@ export default function IncriptionForm(props) {
                   id="chofer_vehiculo"
                   name="chofer_vehiculo"
                   value={chofer_vehiculo}
-                  label="Vehiculo(marca/modelo)"
+                  label="Marca"
                   // autoComplete="address-level1"
                   inputProps={{
                     disabled: userType === "administrador" ? false : true,
