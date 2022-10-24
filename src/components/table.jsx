@@ -3,6 +3,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { DataGrid, esES, GridActionsCellItem } from "@mui/x-data-grid";
 import {
+  Button,
   Dialog,
   DialogContent,
   DialogTitle,
@@ -13,19 +14,20 @@ import {
   tableCellClasses,
   Tooltip,
 } from "@mui/material";
-import { getAllProv, deleteProvById } from "../services";
+import { getAllProv, getDeleteProvs, markAsDeleted } from "../services";
 import { deepOrange } from "@mui/material/colors";
 import { esES as coreEsES } from "@mui/material/locale";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
-import { parse, startOfToday, isAfter, formatISO, format } from "date-fns";
+import { parse, startOfToday, isAfter, formatISO, format, set } from "date-fns";
 import IncriptionForm from "./inscriptionCarrierForm";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "./confirmDialog";
 import AlertDialog from "./alertDialog";
 import { darken, lighten } from "@mui/material/styles";
+import RestoreIcon from "@mui/icons-material/Restore";
 
 const getBackgroundColor = (color, mode) =>
   mode === "dark" ? darken(color, 0.6) : lighten(color, 0.6);
@@ -151,7 +153,12 @@ export default function DataTable() {
   const [nombre, setNombre] = useState();
   const [idProv, setIdProv] = useState();
   const [idDelete, setIdDelete] = useState();
+  const [rowDelete, setRowDelete] = useState([]);
+  const [rowRestore, setRowRestore] = useState([]);
+  const [deletedPart, setDeletedPart] = useState(false);
+  const [restoreDelete, setRestoreDelete] = useState({});
   var [rows, setRows] = useState([]);
+  var [rows2, setRows2] = useState([]);
   var [onLoading, setLoading] = useState(true);
 
   const handleOpenDialog = () => {
@@ -175,21 +182,51 @@ export default function DataTable() {
     setOpenModal(false);
   };
 
-  const handleOpenConfirmDialog = (id, name) => {
+  const handleOpenConfirmDialog = (id, name, row, typeAction) => {
     setIdDelete(id);
     setNombre(name);
+    typeAction === "delete"
+      ? setRowDelete({ ...row, eliminado: 1 })
+      : setRowRestore({ ...row, eliminado: 0 });
+    typeAction === "delete"
+      ? setRestoreDelete({
+          type: "delete",
+          title: "Eliminar socio",
+          description: `¿Eliminar socio ${name}?`,
+          actionButton: "Eliminar",
+          actionButtonColor: "error",
+        })
+      : setRestoreDelete({
+          type: "restore",
+          title: "Restaurar socio",
+          description: `¿Restaurar socio ${name}?`,
+          actionButton: "Restaurar",
+          actionButtonColor: "error",
+        });
     setOpenConfirmDialog(true);
   };
 
   const handleCloseConfirmDialog = () => {
     setOpenConfirmDialog(false);
   };
+  console.log("userType", userType);
+  useEffect(() => {
+    (async () => {
+      let res;
+      res = await getAllProv();
+
+      if (res && userType !== null) {
+        setRows(res);
+      }
+    })(setLoading(false));
+  }, []);
 
   useEffect(() => {
     (async () => {
-      const res = await getAllProv();
+      let res;
+      res = await getDeleteProvs();
       if (res) {
-        setRows(res);
+        setRows2(res);
       }
     })(setLoading(false));
   }, []);
@@ -198,13 +235,35 @@ export default function DataTable() {
     console.log(id);
   };
 
-  const deleteById = (id) => {
+  const deletedPartners = () => {
+    setDeletedPart(true);
+  };
+  const activePart = () => {
+    setDeletedPart(false);
+  };
+
+  const deleteRestoreById = (id) => {
+    console.log("row", rowDelete);
     (async () => {
       handleCloseConfirmDialog();
-      const res = await deleteProvById(id);
-      console.error(res);
+      const res = await markAsDeleted(
+        restoreDelete.type === "delete" ? rowDelete : rowRestore
+      );
       if (res.data.status === "success") {
         setContentDialog("success");
+        setRestoreDelete(
+          restoreDelete.type === "delete"
+            ? {
+                alertTitle: "Eliminar Socio",
+                alertMessage: "Socio eliminado exitosamente",
+                alertError: "Error! No se pudo eliminar",
+              }
+            : {
+                alertTitle: "Restaurar Socio",
+                alertMessage: "Socio restaurado exitosamente",
+                alertError: "Error! No se pudo restaurar",
+              }
+        );
         handleOpenDialog();
         setTimeout(handleCloseDialog, 1000);
         setTimeout(reload, 1000);
@@ -220,7 +279,88 @@ export default function DataTable() {
     navigate("/", { replace: false });
     window.location.reload();
   };
+
+  function Deleted() {
+    return (
+      <Button
+        variant="outlined"
+        size="small"
+        sx={{ mt: 1, ml: 1 }}
+        color={deletedPart ? "success" : "error"}
+        onClick={deletedPart ? () => activePart() : () => deletedPartners()}
+      >
+        {deletedPart ? "Ir a Socios Activos" : "Ir a Socios eliminados"}
+      </Button>
+    );
+  }
+
   const columns = [
+    {
+      field: "actions",
+      type: "actions",
+      headerName: "Acciones",
+      width: 100,
+      cellClassName: "actions",
+      getActions: (params) => {
+        if (userType === "administrador") {
+          if (!deletedPart) {
+            return [
+              <Tooltip title="Editar">
+                <GridActionsCellItem
+                  icon={<EditIcon />}
+                  label="Edit"
+                  className="textPrimary"
+                  onClick={handleEditClick(params.id, userType)}
+                  color="success"
+                />
+              </Tooltip>,
+              <Tooltip title="Eliminar">
+                <GridActionsCellItem
+                  icon={<DeleteIcon />}
+                  label="Delete"
+                  onClick={() =>
+                    handleOpenConfirmDialog(
+                      params.id,
+                      params.row.prov_nombre,
+                      params.row,
+                      "delete"
+                    )
+                  }
+                  color="error"
+                />
+              </Tooltip>,
+            ];
+          } else {
+            return [
+              <Tooltip title="Restaurar">
+                <GridActionsCellItem
+                  icon={<RestoreIcon />}
+                  label="Restore"
+                  onClick={() =>
+                    handleOpenConfirmDialog(
+                      params.id,
+                      params.row.prov_nombre,
+                      params.row,
+                      "restore"
+                    )
+                  }
+                />
+              </Tooltip>,
+            ];
+          }
+        } else if (userType === "operador") {
+          return [
+            <Tooltip title="Ver">
+              <GridActionsCellItem
+                icon={<VisibilityTwoToneIcon />}
+                label="View"
+                onClick={handleEditClick(params.id, userType)}
+              />
+            </Tooltip>,
+          ];
+        }
+      },
+    },
     { field: "id", headerName: "#", width: 50 },
     { field: "prov_asoc", headerName: "Asoc", width: 70 },
     { field: "prov_dni", headerName: "DNI", width: 100 },
@@ -427,48 +567,6 @@ export default function DataTable() {
     // },
     { field: "chofer_cuitTitular", headerName: "CUIT Titular", width: 120 },
     { field: "chofer_anioMod", headerName: "Año Mod", width: 100 },
-    {
-      field: "actions",
-      type: "actions",
-      headerName: "Acciones",
-      width: 100,
-      cellClassName: "actions",
-      getActions: (params) => {
-        if (userType === "administrador") {
-          return [
-            <Tooltip title="Editar">
-              <GridActionsCellItem
-                icon={<EditIcon />}
-                label="Edit"
-                className="textPrimary"
-                onClick={handleEditClick(params.id, userType)}
-                color="success"
-              />
-            </Tooltip>,
-            <Tooltip title="Eliminar">
-              <GridActionsCellItem
-                icon={<DeleteIcon />}
-                label="Delete"
-                onClick={() =>
-                  handleOpenConfirmDialog(params.id, params.row.prov_nombre)
-                }
-                color="error"
-              />
-            </Tooltip>,
-          ];
-        } else if (userType === "operador") {
-          return [
-            <Tooltip title="Ver">
-              <GridActionsCellItem
-                icon={<VisibilityTwoToneIcon />}
-                label="View"
-                onClick={handleEditClick(params.id, userType)}
-              />
-            </Tooltip>,
-          ];
-        }
-      },
-    },
   ];
 
   return (
@@ -476,6 +574,7 @@ export default function DataTable() {
       elevation={3}
       sx={{
         m: 2,
+        mt: -2,
         height: 650,
         "& .super-app-theme--NotExpired": {
           bgcolor: (theme) =>
@@ -504,6 +603,9 @@ export default function DataTable() {
     >
       <ThemeProvider theme={theme}>
         <DataGrid
+          components={{
+            Toolbar: Deleted,
+          }}
           initialState={{
             columns: {
               columnVisibilityModel: {
@@ -515,30 +617,31 @@ export default function DataTable() {
               sortModel: [{ field: "id", sort: "desc" }],
             },
           }}
-          rows={rows}
+          rows={!deletedPart ? rows : rows2}
           loading={onLoading}
           columns={columns}
           pageSize={25}
           rowsPerPageOptions={[25]}
           selectRow={2}
           getRowClassName={(params) => `super-app-theme--${params.row.expire}`}
+          disableSelectionOnClick={true}
         />
         <ConfirmDialog
           open={openConfirmDialog}
           close={handleCloseConfirmDialog}
-          func={() => deleteById(idDelete)}
-          title="Eliminar socio"
-          description={`¿Eliminar socio ${nombre}?`}
-          actionButton="Eliminar"
-          actionButtonColor="error"
+          func={() => deleteRestoreById(idDelete)}
+          title={restoreDelete.title}
+          description={restoreDelete.description}
+          actionButton={restoreDelete.actionButton}
+          actionButtonColor={restoreDelete.actionButtonColor}
         />
         <AlertDialog
           open={OpenDialog}
           close={handleCloseDialog}
           status={contentDialog}
-          title="Eliminar socio"
-          message="Socio eliminado exitosamente"
-          error="Error! No se pudo eliminar"
+          title={restoreDelete.alertTitle}
+          message={restoreDelete.alertMessage}
+          error={restoreDelete.alertError}
         />
         <Dialog
           open={openModal}

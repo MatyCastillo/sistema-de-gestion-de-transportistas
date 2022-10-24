@@ -26,6 +26,7 @@ import {
   getProvById,
   updateProv,
   getImagesById,
+  uploadImageById,
 } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
@@ -33,11 +34,18 @@ import noImg from "../img/no-photo.png";
 import Tooltip from "@mui/material/Tooltip";
 import CancelIcon from "@mui/icons-material/CancelTwoTone";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
-import { Checkbox, FormControlLabel, IconButton } from "@mui/material";
+import {
+  Checkbox,
+  CircularProgress,
+  FormControlLabel,
+  IconButton,
+  LinearProgress,
+} from "@mui/material";
 import ImageForm from "./imageForm";
 import { useEffect } from "react";
 import API from "../utils/const";
 import ImageDialog from "./imgDialog";
+import Loader from "./loader";
 
 const theme = createTheme({
   palette: {
@@ -130,7 +138,6 @@ export default function IncriptionForm(props) {
                   }`,
                 }
           );
-          console.log(hab1);
           setHab2(
             imgs.data.filter((e) => e.img_nombre === "hab2").length === 0
               ? { preview: noImg }
@@ -280,6 +287,7 @@ export default function IncriptionForm(props) {
     })(setEdit(false));
   }, []);
 
+  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [timePickerValue, setTimePickerValue] = useState(null);
   const [helper, setHelper] = useState("");
@@ -332,6 +340,11 @@ export default function IncriptionForm(props) {
 
   const [dniTitFPreview, setDniTitFImgPreview] = useState(noImg);
   const [dniTitDPreview, setDniTitDImgPreview] = useState(noImg);
+
+  const setearLoading = () => {
+    setLoading(true);
+    console.log("loading status", loading);
+  };
 
   const handleDniTitFPreview = (e) => {
     setDniTitF({
@@ -462,7 +475,21 @@ export default function IncriptionForm(props) {
           data.img_nombre,
           data.prov_id
         );
-        console.log("imagen guadada", data.img, data.img_nombre, data.prov_id);
+        return resImg.status;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+
+  const actualizarImg = async (data) => {
+    try {
+      if (data.img_nombre !== undefined) {
+        const resImg = await uploadImageById(
+          data.img,
+          data.img_nombre,
+          data.prov_id
+        );
         return resImg.status;
       }
     } catch (error) {
@@ -493,6 +520,7 @@ export default function IncriptionForm(props) {
   const handleSubmit = async (event) => {
     let res;
     event.preventDefault();
+
     if (props.id === undefined) {
       if (prorroga === false) {
         setData({
@@ -500,52 +528,30 @@ export default function IncriptionForm(props) {
           chofer_prorroga: "0000-00-00",
         });
       }
-      // console.log(document.getElementById("nAsos").value);
-      // if (data.nombreColegio == null || "") {
-      //   setNombreFocused(true);
-      // } else if (data.direccColegio == null || "") {
-      //   setDireccFocus(true);
-      // } else if (data.localidadColegio == null || "") {
-      //   setLocalidadFocus(true);
-      // } else if (data.emailColegio == null || "") {
-      //   setEmailFocus(true);
-      // } else if (data.telColegio == null || "") {
-      //   setTelFocus(true);
-      // } else if (data.nombreDirectivo == null || "") {
-      //   setNombreDFocus(true);
-      // } else if (data.apellidoDirectivo == null || "") {
-      //   setApellidoDFocus(true);
-      // } else if (data.nombreTransportista == null || "") {
-      //   setTansportFocus(true);
-      // } else if (data.dateViaje == null || "") {
-      //   setDateFocus(true);
-      // } else if (data.timeViaje == null || "") {
-      //   setTimeFocus(true);
-      // } else {
       try {
-        console.log(data);
-
+        setLoading(true);
         if (props.id === undefined) {
           res = await createNewProv(data); //work!!!
         }
 
-        guardarImg(dniTitF);
-        guardarImg(dniTitD);
-        guardarImg(dniChofF);
-        guardarImg(dniChofD);
-        guardarImg(hab1);
-        guardarImg(hab2);
-        guardarImg(pol1);
-        guardarImg(pol2);
-        guardarImg(seg1);
-        guardarImg(seg2);
-        guardarImg(regTitF);
-        guardarImg(regTitD);
-        guardarImg(regChofF);
-        guardarImg(regChofD);
-        guardarImg(vtv);
-
+        await guardarImg(dniTitF);
+        await guardarImg(dniTitD);
+        await guardarImg(dniChofF);
+        await guardarImg(dniChofD);
+        await guardarImg(hab1);
+        await guardarImg(hab2);
+        await guardarImg(pol1);
+        await guardarImg(pol2);
+        await guardarImg(seg1);
+        await guardarImg(seg2);
+        await guardarImg(regTitF);
+        await guardarImg(regTitD);
+        await guardarImg(regChofF);
+        await guardarImg(regChofD);
+        await guardarImg(vtv);
+        console.log(res.data);
         if (res.data.status === "success") {
+          setLoading(false);
           setContentDialog({
             title: "Guardado exitoso",
             status: res.data.status,
@@ -561,38 +567,43 @@ export default function IncriptionForm(props) {
             message: res.data.message,
           });
           handleOpenDialog();
+          setLoading(false);
           setTimeout(handleCloseDialog, 2000);
         }
       } catch (e) {
-        console.log("error handle", e);
+        console.log("error handle");
+        console.log(res.data);
         setContentDialog({
           title: "Error durante el guardado",
-          status: res.data.status,
-          message: res.data.message,
+          status: "error",
+          message:
+            "Verifique que todos los campos obligatorios(*) están completos",
         });
         handleOpenDialog();
-        setTimeout(handleCloseDialog, 2000);
+        setLoading(false);
+        setTimeout(handleCloseDialog, 3000);
       }
       // }
     } else {
-      console.log(data);
-      guardarImg(dniTitF);
-      guardarImg(dniTitD);
-      guardarImg(dniChofF);
-      guardarImg(dniChofD);
-      guardarImg(hab1);
-      guardarImg(hab2);
-      guardarImg(pol1);
-      guardarImg(pol2);
-      guardarImg(seg1);
-      guardarImg(seg2);
-      guardarImg(regTitF);
-      guardarImg(regTitD);
-      guardarImg(regChofF);
-      guardarImg(regChofD);
-      guardarImg(vtv);
+      setLoading(true);
+      await actualizarImg(dniTitF);
+      await actualizarImg(dniTitD);
+      await actualizarImg(dniChofF);
+      await actualizarImg(dniChofD);
+      await actualizarImg(hab1);
+      await actualizarImg(hab2);
+      await actualizarImg(pol1);
+      await actualizarImg(pol2);
+      await actualizarImg(seg1);
+      await actualizarImg(seg2);
+      await actualizarImg(regTitF);
+      await actualizarImg(regTitD);
+      await actualizarImg(regChofF);
+      await actualizarImg(regChofD);
+      await actualizarImg(vtv);
       res = await updateProv(data, props.id);
       if (res.data.status === "success") {
+        setLoading(false);
         setContentDialog({
           title: "Guardado exitoso",
           status: res.data.status,
@@ -608,6 +619,7 @@ export default function IncriptionForm(props) {
           message: res.data.message,
         });
         handleOpenDialog();
+        setLoading(false);
         setTimeout(handleCloseDialog, 2000);
       }
     }
@@ -641,8 +653,31 @@ export default function IncriptionForm(props) {
 
   const textInput = useRef(null);
 
+  const setearData = (name, data) => {
+    setData({
+      ...data,
+      [name]: data,
+    });
+  };
+
+  function copiarDatosTitular() {
+    setChofer(prov_nombre);
+    setChofer_dni(prov_dni);
+    setChofer_cuitSocio(chofer_cuitTitular);
+    setData({
+      ...data,
+      chofer: prov_nombre,
+      chofer_dni: prov_dni,
+      chofer_cuitSocio: chofer_cuitTitular,
+    });
+  }
+  console.log(data);
   return (
     <ThemeProvider theme={theme}>
+      {/* {loading && (
+        <LinearProgress sx={{ width: "110%", mt: "-16px", ml: "-22px" }} />
+      )} */}
+      <Loader open={loading} title="Cargando..." />
       <Container component="main" maxWidth="xl">
         <ImageDialog
           image={imgUrl}
@@ -759,9 +794,27 @@ export default function IncriptionForm(props) {
                 />
               </Grid>
               <Grid item xs={12} lg={6}>
-                <Typography component="h3" variant="h6">
-                  Datos del Chofer
-                </Typography>
+                <Box
+                  m={1}
+                  //margin
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="flex-end"
+                >
+                  <Typography component="h3" variant="h6">
+                    Datos del Chofer
+                  </Typography>
+                  {
+                    <Button
+                      onClick={() => copiarDatosTitular()}
+                      variant="contained"
+                      color="primary"
+                      sx={{ height: 40 }}
+                    >
+                      Copiar Datos Titular
+                    </Button>
+                  }
+                </Box>
                 <TextField
                   variant="standard"
                   margin="normal"
@@ -820,7 +873,7 @@ export default function IncriptionForm(props) {
                         disabled: userType === "administrador" ? false : true,
                       }}
                       variant="inline"
-                      label="Vto Registro"
+                      label="Vto Registro(*)"
                       value={vtoRegistro}
                       onChange={(date) =>
                         dateOnChange(date, setVtoRegistro, "chofer_registro")
@@ -984,7 +1037,7 @@ export default function IncriptionForm(props) {
                       disabled: userType === "administrador" ? false : true,
                     }}
                     variant="inline"
-                    label="Vto poliza"
+                    label="Vto poliza(*)"
                     value={vtoPoliza}
                     onChange={(date) =>
                       dateOnChange(date, setVtoPoliza, "chofer_vtoPoliza")
@@ -1028,7 +1081,7 @@ export default function IncriptionForm(props) {
                       disabled: userType === "administrador" ? false : true,
                     }}
                     variant="inline"
-                    label="Vto habilitación"
+                    label="Vto habilitación(*)"
                     value={vtoHab}
                     onChange={(date) =>
                       dateOnChange(date, setVtoHab, "chofer_vtoHab")
@@ -1072,7 +1125,7 @@ export default function IncriptionForm(props) {
                       disabled: userType === "administrador" ? false : true,
                     }}
                     variant="inline"
-                    label="Vto VTV"
+                    label="Vto VTV(*)"
                     value={vtoVtv}
                     onChange={(date) =>
                       dateOnChange(date, setVtoVtv, "chofer_vtoVtv")
@@ -1092,11 +1145,11 @@ export default function IncriptionForm(props) {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField
+                  required
                   variant="standard"
                   onChange={(e) =>
                     handleInputChange(e, setChofer_vehiculoCapacidad)
                   }
-                  required
                   fullWidth
                   id="chofer_vehiculoCapacidad"
                   name="chofer_vehiculoCapacidad"
@@ -1118,7 +1171,7 @@ export default function IncriptionForm(props) {
                       disabled: userType === "administrador" ? false : true,
                     }}
                     variant="inline"
-                    label="Vto Cupón"
+                    label="Vto Cupón(*)"
                     value={vtoCupon}
                     onChange={(date) =>
                       dateOnChange(date, setVtoCupon, "chofer_cupon")
@@ -2150,7 +2203,7 @@ export default function IncriptionForm(props) {
             {userType === "administrador" ? (
               <Grid container justifyContent="flex-end">
                 <Button
-                  type="submit"
+                  // type="submit"
                   variant="contained"
                   sx={{ mt: 3, mb: 2 }}
                   endIcon={
