@@ -64,6 +64,7 @@ const parceDateDb = (date) => {
     var dateCell = parse(dateFormat, "yyyy-MM-dd", new Date());
     return dateCell;
   } catch (e) {
+    console.log("error", date);
     console.error(e);
   }
 };
@@ -71,6 +72,7 @@ const parceDateDb = (date) => {
 export default function IncriptionForm(props) {
   let navigate = useNavigate();
   var userType = sessionStorage.getItem("userType");
+  var userName = sessionStorage.getItem("userName");
   // const userType = props.userType;
   const [edit, setEdit] = useState();
   useEffect(() => {
@@ -249,8 +251,6 @@ export default function IncriptionForm(props) {
                 }
           );
         } catch {}
-        try {
-        } catch (error) {}
         if (res) {
           setEdit(res[0]);
           setProv_asoc(res[0].prov_asoc);
@@ -343,7 +343,6 @@ export default function IncriptionForm(props) {
 
   const setearLoading = () => {
     setLoading(true);
-    console.log("loading status", loading);
   };
 
   const handleDniTitFPreview = (e) => {
@@ -517,11 +516,32 @@ export default function IncriptionForm(props) {
     navigate("/", { replace: false });
     window.location.reload();
   };
+
+  const editerOrCreator = () => {
+    console.log("props id", props.id);
+    if (props.id === undefined) {
+      console.log("entró");
+      setData({
+        ...data,
+        creador: userName,
+        fecha_creacion: new Date(),
+      });
+    } else {
+      setData({
+        ...data,
+        modificador: userName,
+        fecha_modificacion: new Date(),
+      });
+    }
+    console.log("data in auth", data);
+  };
+
   const handleSubmit = async (event) => {
     let res;
     event.preventDefault();
-
+    editerOrCreator();
     if (props.id === undefined) {
+      console.log("data", data);
       if (prorroga === false) {
         setData({
           ...data,
@@ -549,7 +569,7 @@ export default function IncriptionForm(props) {
         await guardarImg(regChofF);
         await guardarImg(regChofD);
         await guardarImg(vtv);
-        console.log(res.data);
+
         if (res.data.status === "success") {
           setLoading(false);
           setContentDialog({
@@ -559,7 +579,7 @@ export default function IncriptionForm(props) {
           });
           handleOpenDialog();
           setTimeout(handleCloseDialog, 1000);
-          setTimeout(reload, 1000);
+          //  setTimeout(reload, 1000);
         } else {
           setContentDialog({
             title: "Error durante el guardado",
@@ -568,7 +588,7 @@ export default function IncriptionForm(props) {
           });
           handleOpenDialog();
           setLoading(false);
-          setTimeout(handleCloseDialog, 2000);
+          //  setTimeout(handleCloseDialog, 2000);
         }
       } catch (e) {
         console.log("error handle");
@@ -585,6 +605,14 @@ export default function IncriptionForm(props) {
       }
       // }
     } else {
+      //esto es para guardar quien modifico y cuando
+      // setData({
+      //   ...data,
+      //   modificado_por: userName,
+      //   ultima_mod: new Date(),
+      // });
+      // console.log(data);
+      // console.log("userName", userName);
       setLoading(true);
       await actualizarImg(dniTitF);
       await actualizarImg(dniTitD);
@@ -613,6 +641,7 @@ export default function IncriptionForm(props) {
         setTimeout(handleCloseDialog, 1000);
         setTimeout(reload, 1000);
       } else {
+        setLoading(false);
         setContentDialog({
           title: "Error durante el guardado",
           status: res.data.status,
@@ -671,7 +700,6 @@ export default function IncriptionForm(props) {
       chofer_cuitSocio: chofer_cuitTitular,
     });
   }
-  console.log(data);
   return (
     <ThemeProvider theme={theme}>
       {/* {loading && (

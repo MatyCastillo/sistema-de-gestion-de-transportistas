@@ -214,8 +214,8 @@ export default function DataTable() {
     (async () => {
       let res;
       res = await getAllProv();
-
       if (res && userType !== null) {
+        console.log("response", res);
         setRows(res);
       }
     })(setLoading(false));
