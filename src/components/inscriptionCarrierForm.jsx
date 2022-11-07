@@ -27,6 +27,7 @@ import {
   updateProv,
   getImagesById,
   uploadImageById,
+  getPdf
 } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
@@ -248,6 +249,30 @@ export default function IncriptionForm(props) {
                   }`,
                 }
           );
+          setCedulaVerdeFront(
+            imgs.data.filter((e) => e.img_nombre === "cedulaVerdeFront")
+              .length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "cedulaVerdeFront" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setCedulaVerdeBack(
+            imgs.data.filter((e) => e.img_nombre === "cedulaVerdeBack")
+              .length === 0
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "cedulaVerdeBack" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
         } catch {}
         try {
         } catch (error) {}
@@ -335,6 +360,8 @@ export default function IncriptionForm(props) {
   const [regChofF, setRegChofF] = useState({ preview: noImg });
   const [regChofD, setRegChofD] = useState({ preview: noImg });
   const [vtv, setVtv] = useState({ preview: noImg });
+  const [cedulaVerdeFront, setCedulaVerdeFront] = useState({ preview: noImg });
+  const [cedulaVerdeBack, setCedulaVerdeBack] = useState({ preview: noImg });
 
   const [viewPreview, setViewPreview] = useState({ state: false });
 
@@ -466,7 +493,22 @@ export default function IncriptionForm(props) {
       prov_id: document.getElementById("prov_asoc").value,
     });
   };
-
+  const handleCedulaVerdeFrontPreview = (e) => {
+    setCedulaVerdeFront({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
+  };
+  const handleCedulaVerdeBackPreview = (e) => {
+    setCedulaVerdeBack({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
+  };
   const guardarImg = async (data) => {
     try {
       if (data.img_nombre !== undefined) {
@@ -517,6 +559,11 @@ export default function IncriptionForm(props) {
     navigate("/", { replace: false });
     window.location.reload();
   };
+
+  const handlePDF = async () => {
+    await getPdf();
+  }
+
   const handleSubmit = async (event) => {
     let res;
     event.preventDefault();
@@ -549,6 +596,8 @@ export default function IncriptionForm(props) {
         await guardarImg(regChofF);
         await guardarImg(regChofD);
         await guardarImg(vtv);
+        await guardarImg(cedulaVerdeFront);
+        await guardarImg(cedulaVerdeBack);
         console.log(res.data);
         if (res.data.status === "success") {
           setLoading(false);
@@ -601,6 +650,8 @@ export default function IncriptionForm(props) {
       await actualizarImg(regChofF);
       await actualizarImg(regChofD);
       await actualizarImg(vtv);
+      await actualizarImg(cedulaVerdeFront);
+      await actualizarImg(cedulaVerdeBack);
       res = await updateProv(data, props.id);
       if (res.data.status === "success") {
         setLoading(false);
@@ -2199,6 +2250,140 @@ export default function IncriptionForm(props) {
                 )}
               </Grid>
               {/**Fin registro foto vtv */}
+              {/**Inicio foto cedula verde frente */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setCedulaVerdeFront({ preview: noImg })
+                      : ""
+                  }
+                  sx={{ zIndex: "tooltip", ml: 1 }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  onClick={handeClickOpenPreview}
+                  variant="rounded"
+                  id="cedulaVerdeFront"
+                  name="cedulaVerdeFront"
+                  alt="no-photo"
+                  src={cedulaVerdeFront.preview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
+                ></Avatar>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    cedula verde frente
+                    <input
+                      hidden
+                      id="cedulaVerdeFront"
+                      name="cedulaVerdeFront"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleCedulaVerdeFrontPreview}
+                    />
+                  </Button>
+                ) : (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    cedula verde frente
+                  </Button>
+                )}
+              </Grid>
+              {/**Fin Inicio foto cedula verde frente */}
+              {/**Inicio foto cedula verde dorso */}
+              <Grid>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() =>
+                    userType === "administrador"
+                      ? setCedulaVerdeBack({ preview: noImg })
+                      : ""
+                  }
+                  sx={{ zIndex: "tooltip", ml: 1 }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  onClick={handeClickOpenPreview}
+                  variant="rounded"
+                  id="cedulaVerdeBack"
+                  name="cedulaVerdeBack"
+                  alt="no-photo"
+                  src={cedulaVerdeBack.preview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
+                ></Avatar>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    cedula verde dorso
+                    <input
+                      hidden
+                      id="cedulaVerdeBack"
+                      name="cedulaVerdeBack"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleCedulaVerdeBackPreview}
+                    />
+                  </Button>
+                ) : (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    cedula verde dorso
+                  </Button>
+                )}
+              </Grid>
+              {/**Fin Inicio foto cedula verde dorso */}
             </Grid>
             {userType === "administrador" ? (
               <Grid container justifyContent="flex-end">

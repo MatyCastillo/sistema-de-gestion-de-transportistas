@@ -129,6 +129,18 @@ const getImagesById = async (id) => {
     return err;
   }
 };
+
+const getPdf = async () => {
+  try {
+   await axios.get(`${API.URI}/api/v1/proveedores/pdf`, {
+    responseType: 'blob', // had to add this one here
+})
+   
+  } catch (err) {
+    return err;
+  }
+};
+
 export {
   getAllProv,
   createNewProv,
@@ -141,4 +153,5 @@ export {
   markAsDeleted,
   uploadImageById,
   getDeleteProvs,
+  getPdf,
 };
