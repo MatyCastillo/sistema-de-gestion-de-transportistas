@@ -36,7 +36,7 @@ export default function Loader(prop) {
               flexDirection: "column",
               m: "auto",
               width: "200px",
-              height: "10px",
+              height: "25px",
             }}
           ></Box>
         </DialogContent>

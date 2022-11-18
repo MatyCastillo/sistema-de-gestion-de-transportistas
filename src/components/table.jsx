@@ -209,7 +209,6 @@ export default function DataTable() {
   const handleCloseConfirmDialog = () => {
     setOpenConfirmDialog(false);
   };
-  console.log("userType", userType);
   useEffect(() => {
     (async () => {
       let res;
@@ -243,7 +242,6 @@ export default function DataTable() {
   };
 
   const deleteRestoreById = (id) => {
-    console.log("row", rowDelete);
     (async () => {
       handleCloseConfirmDialog();
       const res = await markAsDeleted(
@@ -620,8 +618,8 @@ export default function DataTable() {
           rows={!deletedPart ? rows : rows2}
           loading={onLoading}
           columns={columns}
-          pageSize={25}
-          rowsPerPageOptions={[25]}
+          pageSize={100}
+          rowsPerPageOptions={[100]}
           selectRow={2}
           getRowClassName={(params) => `super-app-theme--${params.row.expire}`}
           disableSelectionOnClick={true}

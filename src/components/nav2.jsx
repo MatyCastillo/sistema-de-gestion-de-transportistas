@@ -38,6 +38,7 @@ import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import LogoUteam from "../img/logo-uteam-transparente.png";
 import AvatarNab from "./avatarNab";
 import noAvatar from "../img/no-avatar.png";
+import { Link } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -167,6 +168,8 @@ export default function NavBar(props) {
               <MenuIcon />
             </IconButton>
             <img
+              component={Link}
+              to="/"
               src={LogoUteam}
               alt="logo"
               style={{ width: "50px", marginRight: " 10px" }}
@@ -267,51 +270,58 @@ export default function NavBar(props) {
           </List>
           <Divider />
           <List>
-            <ListItem key="reports" disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: openSideBar ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
+            <Tooltip title="Planilla de documentación" placement="right">
+              <ListItem component={Link} to="/" key="reports" disablePadding sx={{ display: "block" }}>
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: openSideBar ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
                   }}
                 >
-                  <DescriptionIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Planilla de documentación"
-                  sx={{ opacity: openSideBar ? 1 : 0 }}
-                />
-              </ListItemButton>
-              <ListItemButton
-                disabled
-                sx={{
-                  minHeight: 48,
-                  justifyContent: openSideBar ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: openSideBar ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <LocalPrintshopIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Impresiones"
-                  sx={{ opacity: openSideBar ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <DescriptionIcon />
+                  </ListItemIcon>
+                  <ListItemText
+              
+                    primary="Planilla de documentación"
+                    sx={{ opacity: openSideBar ? 1 : 0 , color: "black" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+              <Tooltip title="Impresiones" placement="right">
+                <ListItem component={Link} to="/impresiones" disablePadding sx={{ display: "block" }}>
+                  <ListItemButton
+                
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: openSideBar ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                     <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: openSideBar ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <LocalPrintshopIcon />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Impresiones"
+                      sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
             <ListItem key="stadistics" disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 disabled

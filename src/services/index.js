@@ -1,5 +1,8 @@
 import axios from "axios";
+import fileDownload from "js-file-download";
 import API from "../utils/const";
+import { format } from "date-fns";
+const dia = format(new Date(), "dd-MM-yyyy_HH-mm");
 
 const getAllProv = async () => {
   const petition = await axios.get(`${API.URI}/api/v1/proveedores/`);
@@ -130,15 +133,27 @@ const getImagesById = async (id) => {
   }
 };
 
-const getPdf = async () => {
-  try {
-   await axios.get(`${API.URI}/api/v1/proveedores/pdf`, {
-    responseType: 'blob', // had to add this one here
-})
-   
-  } catch (err) {
-    return err;
-  }
+const getPdf = async (user) => {
+  const prov = await getProvById(user);
+  const file_name = `${prov[0].prov_asoc}_${prov[0].prov_nombre}_${dia}hs.pdf`;
+  const urlApi = `${API.URI}/api/v1/proveedores/pdf/${user}`;
+  const petition = await axios
+    .get(urlApi, {
+      responseType: "blob",
+    })
+    .then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", file_name);
+      document.body.appendChild(link);
+      link.click();
+      return response;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  return petition;
 };
 
 export {

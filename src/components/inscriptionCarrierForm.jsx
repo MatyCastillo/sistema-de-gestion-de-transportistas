@@ -27,7 +27,7 @@ import {
   updateProv,
   getImagesById,
   uploadImageById,
-  getPdf
+  getPdf,
 } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
@@ -561,8 +561,9 @@ export default function IncriptionForm(props) {
   };
 
   const handlePDF = async () => {
-    await getPdf();
-  }
+    const paraPdf = { userId: 132 };
+    await getPdf(paraPdf);
+  };
 
   const handleSubmit = async (event) => {
     let res;

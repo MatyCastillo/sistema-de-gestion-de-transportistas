@@ -9,8 +9,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<SignIn />} />
-          <Route path="/inscripciones" element={<Home form="true" />} />
+          {/* <Route path="/inscripciones" element={<Home form="true" />} /> */}
           <Route path="/" element={<Home />} />
+          <Route path="/impresiones" element={<Home table="impresiones"/>} />
         </Routes>
       </BrowserRouter>
     </UserContextProvider>

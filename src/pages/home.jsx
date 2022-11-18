@@ -28,8 +28,8 @@ export default function Home(prop) {
           {/* <Button variant="contained" size="small" sx={{ ml: 2 }} color="error">
             Socios eliminados
           </Button> */}
-          <Table sx={{ m: 2 }} />
-          {/* <TableSelection sx={{ m: 2 }} /> */}
+          {prop.table? <TableSelection sx={{ m: 2 }} />:<Table sx={{ m: 2 }} />
+}          {/* <TableSelection sx={{ m: 2 }} /> */}
         </Nav2>
       }
     </>
