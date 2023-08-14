@@ -247,6 +247,7 @@ export default function DataTable() {
       const res = await markAsDeleted(
         restoreDelete.type === "delete" ? rowDelete : rowRestore
       );
+      console.log("respuesta", res.data);
       if (res.data.status === "success") {
         setContentDialog("success");
         setRestoreDelete(

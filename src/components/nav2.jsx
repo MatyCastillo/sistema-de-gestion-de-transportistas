@@ -271,7 +271,13 @@ export default function NavBar(props) {
           <Divider />
           <List>
             <Tooltip title="Planilla de documentación" placement="right">
-              <ListItem component={Link} to="/" key="reports" disablePadding sx={{ display: "block" }}>
+              <ListItem
+                component={Link}
+                to="/"
+                key="reports"
+                disablePadding
+                sx={{ display: "block" }}
+              >
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -289,42 +295,50 @@ export default function NavBar(props) {
                     <DescriptionIcon />
                   </ListItemIcon>
                   <ListItemText
-              
                     primary="Planilla de documentación"
-                    sx={{ opacity: openSideBar ? 1 : 0 , color: "black" }}
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
                   />
                 </ListItemButton>
               </ListItem>
             </Tooltip>
-              <Tooltip title="Impresiones" placement="right">
-                <ListItem component={Link} to="/impresiones" disablePadding sx={{ display: "block" }}>
-                  <ListItemButton
-                
+            <Tooltip title="Impresiones" placement="right">
+              <ListItem
+                key="prints"
+                component={Link}
+                to="/impresiones"
+                disablePadding
+                sx={{ display: "block" }}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
                     sx={{
-                      minHeight: 48,
-                      justifyContent: openSideBar ? "initial" : "center",
-                      px: 2.5,
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
                     }}
                   >
-                     <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: openSideBar ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <LocalPrintshopIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Impresiones"
-                      sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Tooltip>
-            <ListItem key="stadistics" disablePadding sx={{ display: "block" }}>
+                    <LocalPrintshopIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Impresiones"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+            <ListItem
+              key="logistics-report"
+              disablePadding
+              sx={{ display: "block" }}
+            >
               <ListItemButton
-                disabled
+              disabled
                 sx={{
                   minHeight: 48,
                   justifyContent: openSideBar ? "initial" : "center",
