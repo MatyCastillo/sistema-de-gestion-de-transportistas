@@ -11,7 +11,20 @@ function App() {
           <Route path="/login" element={<SignIn />} />
           {/* <Route path="/inscripciones" element={<Home form="true" />} /> */}
           <Route path="/" element={<Home />} />
-          <Route path="/impresiones" element={<Home table="impresiones"/>} />
+          <Route path="/impresiones-general" element={<Home table="impresiones" key_comp="impresiones_generales"/>} />
+          <Route path="/impresiones-provincial" element={<Home table="impresiones" print="impresion_provincial" key_comp="impresion_provincial" />} />
+          <Route
+            path="/reportes-patentes"
+            element={<Home table="patentes" />}
+          />
+          <Route
+            path="/reportes-logistica"
+            element={<Home type="logistic" />}
+          />
+          <Route
+            path="/padron-provincial"
+            element={<Home type="provincial" />}
+          />
         </Routes>
       </BrowserRouter>
     </UserContextProvider>

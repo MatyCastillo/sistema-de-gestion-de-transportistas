@@ -14,7 +14,22 @@ import {
   tableCellClasses,
   Tooltip,
 } from "@mui/material";
-import { getAllProv, getDeleteProvs, markAsDeleted } from "../services";
+import {
+  getAllProv,
+  getDeleteProvs,
+  markAsDeleted,
+  getImagesStatus,
+  getRecordsBetweenDates,
+  descargarArchivoXLSX 
+} from "../services";
+import {
+  getAllProv as getAllProv_provincial,
+  getDeleteProvs as getDeleteProvs_provincial,
+  markAsDeleted as markAsDeleted_provincial,
+  getImagesStatus as getImagesStatus_provincial,
+  getRecordsBetweenDates as getRecordsBetweenDates_provincial,
+  descargarArchivoXLSX as descargarArchivoXLSX_provincial
+} from "../services/provincial";
 import { deepOrange } from "@mui/material/colors";
 import { esES as coreEsES } from "@mui/material/locale";
 import EditIcon from "@mui/icons-material/Edit";
@@ -23,11 +38,22 @@ import CloseIcon from "@mui/icons-material/Close";
 import VisibilityTwoToneIcon from "@mui/icons-material/VisibilityTwoTone";
 import { parse, startOfToday, isAfter, formatISO, format, set } from "date-fns";
 import IncriptionForm from "./inscriptionCarrierForm";
+import IncriptionFormProv from "./inscriptionCarrierFormProv";
 import { useNavigate } from "react-router-dom";
 import ConfirmDialog from "./confirmDialog";
 import AlertDialog from "./alertDialog";
 import { darken, lighten } from "@mui/material/styles";
 import RestoreIcon from "@mui/icons-material/Restore";
+import TaskAltIcon from "@mui/icons-material/TaskAlt";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import { DatePicker } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import esLocale from "date-fns/locale/es";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import TextField from "@mui/material/TextField";
+import SearchIcon from "@mui/icons-material/Search";
+import DownloadIcon from "@mui/icons-material/Download";
+
 
 const getBackgroundColor = (color, mode) =>
   mode === "dark" ? darken(color, 0.6) : lighten(color, 0.6);
@@ -41,6 +67,7 @@ const theme = createTheme(
       primary: deepOrange,
       secondary: {
         main: "#bf360c",
+        secondary: "#bbdefb" 
       },
     },
   },
@@ -112,36 +139,7 @@ function createData(
   };
 }
 
-const rowsMock = [
-  createData(
-    1,
-    "7b",
-    "26.345.816",
-    "DURSO, Fernando J.",
-    "DURSO, Fernando J.",
-    "DURSO, Fernando J",
-    "26.345.816",
-    "FTZ 322",
-    "445",
-    "28/02/2023",
-    "CALEDONIA",
-    "2115693",
-    "10/07/2022",
-    "222317189",
-    "09/07/2022",
-    "M BENZ",
-    "50",
-    "15/05/2022",
-    "23/03/2023",
-    "Sin prorroga",
-    "20-26345816-9",
-    "DURSO, Fernando J",
-    "20-26345816-9",
-    "2006"
-  ),
-];
-
-export default function DataTable() {
+export default function DataTable(props) {
   let navigate = useNavigate();
   var hoy = startOfToday();
   var userType = sessionStorage.getItem("userType");
@@ -157,9 +155,21 @@ export default function DataTable() {
   const [rowRestore, setRowRestore] = useState([]);
   const [deletedPart, setDeletedPart] = useState(false);
   const [restoreDelete, setRestoreDelete] = useState({});
+  const [stat, setStat] = useState();
+  const today = new Date();
+  const past7days = new Date();
+  past7days.setDate(past7days.getDate() + 7)
+  const [startDate, setStartDate] = React.useState(today);
+  const [endDate, setEndDate] = React.useState(past7days);
+
+
   var [rows, setRows] = useState([]);
   var [rows2, setRows2] = useState([]);
   var [onLoading, setLoading] = useState(true);
+
+  const tableRef = React.createRef();
+
+  var bodyObject = new Object();
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -209,13 +219,19 @@ export default function DataTable() {
   const handleCloseConfirmDialog = () => {
     setOpenConfirmDialog(false);
   };
+  
   useEffect(() => {
     (async () => {
       let res;
-      res = await getAllProv();
-
+      if(props.type==="provincial"){
+        res= await getAllProv_provincial();
+      }else {
+        res = await getAllProv();
+      }
       if (res && userType !== null) {
-        setRows(res);
+        if (props.type !== "logistic") {
+          setRows(res);
+        }
       }
     })(setLoading(false));
   }, []);
@@ -223,12 +239,30 @@ export default function DataTable() {
   useEffect(() => {
     (async () => {
       let res;
-      res = await getDeleteProvs();
+      res = props.type==="provincial"?await getDeleteProvs_provincial():await getDeleteProvs();
       if (res) {
         setRows2(res);
       }
     })(setLoading(false));
   }, []);
+
+
+  const handlegetRecordsBetweenDates = async () => {
+    try {
+      const res = await getRecordsBetweenDates(startDate, endDate);
+      setRows(res);
+    } catch (error) {
+      // Manejar el error si es necesario
+      console.error("Error al buscar registros:", error);
+      setOpenDialog(true)
+      setContentDialog("error")
+      setRestoreDelete({
+        alertTitle: "Error al filtrar por fecha",
+        alertMessage: error.message,
+      })
+      
+    }
+  };
 
   const handleDeleteClick = (id) => {
     console.log(id);
@@ -244,9 +278,17 @@ export default function DataTable() {
   const deleteRestoreById = (id) => {
     (async () => {
       handleCloseConfirmDialog();
-      const res = await markAsDeleted(
-        restoreDelete.type === "delete" ? rowDelete : rowRestore
-      );
+      let res
+      if(props.type==="provincial"){
+         res = await markAsDeleted_provincial(
+          restoreDelete.type === "delete" ? rowDelete : rowRestore
+        );
+      }else{
+           res = await markAsDeleted(
+          restoreDelete.type === "delete" ? rowDelete : rowRestore
+        );
+      }
+
       if (res.data.status === "success") {
         setContentDialog("success");
         setRestoreDelete(
@@ -274,11 +316,24 @@ export default function DataTable() {
   };
 
   const reload = () => {
-    navigate("/", { replace: false });
+    if (props.type==="provincial"){
+    navigate("/padron-provincial", { replace: false });
+    }else{
+      navigate("/", { replace: false });
+    }
     window.location.reload();
   };
 
+  const descargarXLSX = (datos,fechaInicio,fechaFin) => {
+    bodyObject.data = rows
+    bodyObject.startDate = startDate
+    bodyObject.endDate = endDate
+
+    descargarArchivoXLSX(bodyObject)    
+  }
+
   function Deleted() {
+   
     return (
       <Button
         variant="outlined"
@@ -292,7 +347,125 @@ export default function DataTable() {
     );
   }
 
+  function filterByDay() {
+    return (
+      <>
+        {/* Inicio */}
+        <LocalizationProvider
+          dateAdapter={AdapterDateFns}
+          adapterLocale={esLocale}
+        >
+          <DatePicker
+            variant="inline"
+            label="Buscar desde:"
+            value={startDate}
+            onChange={(newValue) => setStartDate(newValue)}
+            InputAdornmentProps={{ position: "start" }}
+            renderInput={(params) => (
+              <TextField
+                placeholder="DD/MM/AAAA"
+                sx={{ ml: 1, mt: 1 }}
+                size="small"
+                variant="standard"
+                {...params}
+              />
+            )}
+          />
+        </LocalizationProvider>
+        {/*Fin*/}
+        <LocalizationProvider
+          dateAdapter={AdapterDateFns}
+          adapterLocale={esLocale}
+        >
+          <DatePicker
+            variant="inline"
+            label="Buscar hasta:"
+            value={endDate}
+            onChange={(newValue) => setEndDate(newValue)}
+            InputAdornmentProps={{ position: "start" }}
+            renderInput={(params) => (
+              <TextField
+                placeholder="DD/MM/AAAA"
+                sx={{ ml: 2, mt: 1 }}
+                size="small"
+                variant="standard"
+                {...params}
+              />
+            )}
+          />
+        </LocalizationProvider>
+        <Button
+          variant="contained"
+          endIcon={<SearchIcon />}
+          size="small"
+          sx={{ mt: 2, ml: 1 }}
+          onClick={()=>handlegetRecordsBetweenDates()}
+        >
+          Filtrar
+        </Button>
+        <Button
+          disabled={rows.length===0?true:false}
+          variant="contained"
+          endIcon={<DownloadIcon />}
+          size="small"
+          sx={{ mt: 2, ml: 1 }}
+          color="success"
+          onClick={()=>descargarXLSX()}
+        >
+          Generar XLSX
+        </Button>
+        <Button
+          variant="contained"
+          endIcon={<DeleteIcon />}
+          size="small"
+          sx={{ mt: 2, ml: 1 }}
+          color="error"
+          onClick={()=>cleanButton()}
+        >
+          Limpiar
+        </Button>
+      </>
+    );
+  }
+function cleanButton(){
+  setRows([])
+  setStartDate(today)
+  setEndDate(past7days)
+}
+  const imageStatus = async (id) => {
+    const res = await getImagesStatus(id);
+    return res.data;
+  };
+
+  const [statusTest, setStatusTeset] = useState();
   const columns = [
+    // {
+    //   field: "status",
+    //   headerName: "Estado",
+    //   width: 70,
+    //   renderCell: (cellValues) => {
+    //     const s = () => {
+    //       return imageStatus(cellValues.row.prov_asoc);
+    //     };
+    //     return (
+    //       <Tooltip
+    //         placement="right"
+    //         title={
+    //           statusTest
+    //             ? "Todas las imagenes cargadas"
+    //             : "Faltan imagenes por cargar"
+    //         }
+    //       >
+    //         <GridActionsCellItem
+    //           icon={statusTest ? <TaskAltIcon /> : <HighlightOffIcon />}
+    //           label="Edit"
+    //           className="textPrimary"
+    //           color={statusTest ? "success" : "error"}
+    //         />
+    //       </Tooltip>
+    //     );
+    //   },
+    // },
     {
       field: "actions",
       type: "actions",
@@ -597,24 +770,54 @@ export default function DataTable() {
           },
         },
       }}
-      style={{}}
     >
       <ThemeProvider theme={theme}>
         <DataGrid
-          components={{
-            Toolbar: Deleted,
-          }}
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                // Hide columns status and traderName, the other columns will remain visible
-                id: false,
-              },
-            },
-            sorting: {
-              sortModel: [{ field: "id", sort: "desc" }],
-            },
-          }}
+        ref={tableRef}
+          id="data-table"
+          components={
+            props.type === "logistic"
+              ? {
+                  Toolbar: filterByDay,
+                }
+              : {
+                  Toolbar: Deleted,
+                }
+          }
+          initialState={
+            props.type === "logistic"
+              ? {
+                  columns: {
+                    columnVisibilityModel: {
+                      // Hide columns status and traderName, the other columns will remain visible
+                      id: false,
+                      prov_dni: false,
+                      prov_titularVehiculo: false,
+                      chofer: false,
+                      chofer_dni: false,
+                      chofer_seguro: false,
+                      chofer_nPoliza: false,
+                      chofer_nVtv: false,
+                      chofer_vehiculo: false,
+                      chofer_registro: false,
+                      chofer_prorroga: false,
+                      chofer_cuitSocio: false,
+                      chofer_cuitTitular: false,
+                      chofer_anioMod: false,
+                      status: false,
+                      actions: false,
+                    },
+                  },
+                }
+              : {
+                  columns: {
+                    columnVisibilityModel: {
+                      // Hide columns status and traderName, the other columns will remain visible
+                      id: false,
+                    },
+                  },
+                }
+          }
           rows={!deletedPart ? rows : rows2}
           loading={onLoading}
           columns={columns}
@@ -623,6 +826,7 @@ export default function DataTable() {
           selectRow={2}
           getRowClassName={(params) => `super-app-theme--${params.row.expire}`}
           disableSelectionOnClick={true}
+          
         />
         <ConfirmDialog
           open={openConfirmDialog}
@@ -663,7 +867,7 @@ export default function DataTable() {
             >
               <CloseIcon />
             </IconButton>
-            <IncriptionForm id={idProv} userType={userType} />
+            {props.type==="provincial"?<IncriptionFormProv id={idProv} userType={userType} />:<IncriptionForm id={idProv} userType={userType} />}
           </DialogContent>
         </Dialog>
       </ThemeProvider>

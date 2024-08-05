@@ -21,13 +21,18 @@ import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
 import {
   Button,
+  Collapse,
   Dialog,
   DialogContent,
   DialogTitle,
   ThemeProvider,
+  Badge,
+  ListItemAvatar,
+  Avatar,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import IncriptionForm from "./inscriptionCarrierForm";
+import IncriptionFormProv from "./inscriptionCarrierFormProv";
 import Tooltip from "@mui/material/Tooltip";
 import useUser from "../hooks/useUser";
 import AssessmentIcon from "@mui/icons-material/Assessment";
@@ -38,16 +43,27 @@ import LocalPrintshopIcon from "@mui/icons-material/LocalPrintshop";
 import LogoUteam from "../img/logo-uteam-transparente.png";
 import AvatarNab from "./avatarNab";
 import noAvatar from "../img/no-avatar.png";
+import DirectionsCarIcon from "@mui/icons-material/Money";
+import BusAlertIcon from "@mui/icons-material/BusAlert";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import MenuItem from "@mui/material/MenuItem";
+import Menu from "@mui/material/Menu";
 import { Link } from "react-router-dom";
+import NotificationsMenu from "./notifications";
+import { getNotifications } from "../services";
+import { useLocation } from "react-router-dom";
 
 const drawerWidth = 240;
 
 const theme2 = createTheme({
   palette: {
-    primary: deepOrange,
+    primary: { main: deepOrange[500] },
     secondary: {
       main: "#bf360c",
     },
+    prov: "#42a5f5",
   },
 });
 
@@ -117,13 +133,45 @@ export default function NavBar(props) {
     !isMobile ? true : false
   );
   const [openModal, setOpenModal] = React.useState(props.form ? true : false);
+  const [open, setOpen] = React.useState(true);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notifData, setNotifData] = React.useState([]);
+  const [formType, setFormType] = React.useState("");
+  const location = useLocation();
 
+  // Acá se cargan las notificaciones desde la base de datos
+  React.useEffect(() => {
+    (async () => {
+      let res;
+      res = await getNotifications();
+
+      setNotifData(res.data);
+    })();
+  }, []);
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
   const handleClickOpenModal = () => {
+    setFormType("");
     if (userType === "administrador") {
       setOpenModal(true);
     }
   };
-
+  const handleClickOpenModalProv = () => {
+    setFormType("prov");
+    if (userType === "administrador") {
+      setOpenModal(true);
+    }
+  };
   const handleCloseModal = () => {
     setOpenModal(false);
   };
@@ -181,6 +229,23 @@ export default function NavBar(props) {
             >
               Sistema {isMobile ? <br /> : ""} interno UTEAM
             </Typography>
+            {/*Notificaciones*/}
+            {/*https://codesandbox.io/s/8k4gvv?file=/demo.tsx Sacar de ahi como mostrar las notificaciones*/}
+            <IconButton size="large" color="inherit" onClick={handleMenu}>
+              <Badge badgeContent={notifData.length} color="error">
+                {/**"badgeContent" da el numero de notif. esto se podria manejar con el legnth del json para mostrar las notif. */}
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+            <NotificationsMenu
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              handleClose={handleClose}
+              data={notifData}
+              primaryText="No hay notificaciones disponibles."
+              secondaryText=""
+            />
+            {/*fin notificaciones*/}
             <AvatarNab img={noAvatar} user={userName} />
             <Tooltip
               title={
@@ -191,8 +256,8 @@ export default function NavBar(props) {
             >
               <Typography>
                 {userName && userType
-                  ? `Bienvenido, ${userName} (${userType})`
-                  : `Bienvenido, nombre (tipo de usario)`}
+                  ? `Bienvenido/a, ${userName.charAt(0).toUpperCase() + userName.slice(1)} (${userType})`
+                  : `Bienvenido/a, Nombre (tipo de usario)`}
               </Typography>
             </Tooltip>
             <Tooltip title="Salir">
@@ -213,8 +278,14 @@ export default function NavBar(props) {
               onClose={handleCloseModal}
               scroll="body"
             >
-              <DialogTitle id="scroll-dialog-title">
-                Formulario de alta
+              <DialogTitle
+                id="scroll-dialog-title"
+                sx={{
+                  backgroundColor: formType === "prov" ? "#37BBED" : "#f97146",
+                }}
+              >
+                Formulario de alta |{" "}
+                {formType === "prov" ? "Padrón Provincial" : "Padrón General"}
               </DialogTitle>
               <DialogContent dividers>
                 <IconButton
@@ -229,7 +300,11 @@ export default function NavBar(props) {
                 >
                   <CloseIcon />
                 </IconButton>
-                <IncriptionForm />
+                {formType === "prov" ? (
+                  <IncriptionFormProv />
+                ) : (
+                  <IncriptionForm />
+                )}
               </DialogContent>
             </Dialog>
           </Toolbar>
@@ -237,41 +312,102 @@ export default function NavBar(props) {
         <Drawer variant="permanent" open={openSideBar}>
           <Toolbar />
           <List>
-            <ListItem
-              onClick={handleClickOpenModal}
-              disabled={userType && userType === "administrador" ? false : true}
-              key="form"
-              disablePadding
-              sx={isMobile ? { display: "block", mt: 5 } : { display: "block" }}
-              selected
-            >
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: openSideBar ? "initial" : "center",
-                  px: 2.5,
-                }}
+            <Tooltip title="Añadir al Padron General">
+              <ListItem
+                onClick={handleClickOpenModal}
+                disabled={
+                  userType && userType === "administrador" ? false : true
+                }
+                key="form"
+                disablePadding
+                sx={
+                  isMobile ? { display: "block", mt: 5 } : { display: "block" }
+                }
+                selected
               >
-                <ListItemIcon
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: openSideBar ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
                   }}
                 >
-                  <AddIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Añadir socio"
-                  sx={{ opacity: openSideBar ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AddIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Añadir socio(PG)"
+                    sx={{ opacity: openSideBar ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+            <Tooltip title="Añadir al Padron Provincial">
+              <ListItem
+                onClick={handleClickOpenModalProv}
+                disabled={
+                  userType && userType === "administrador" ? false : true
+                }
+                key="form"
+                disablePadding
+                sx={
+                  isMobile
+                    ? { display: "block", mt: 5 }
+                    : {
+                        display: "block",
+                        "&.Mui-selected": {
+                          backgroundColor: "#55c6f1c2", // Cambia el color de fondo cuando está seleccionado
+                        },
+                      }
+                }
+                selected
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <AddIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Añadir socio(PP)"
+                    sx={{ opacity: openSideBar ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
           </List>
           <Divider />
           <List>
-            <Tooltip title="Planilla de documentación" placement="right">
-              <ListItem component={Link} to="/" key="reports" disablePadding sx={{ display: "block" }}>
+            <Tooltip title="Padrón General" placement="right">
+              <ListItem
+                selected={location.pathname === "/"}
+                component={Link}
+                to="/"
+                key="reports"
+                disablePadding
+                sx={{
+                  display: "block",
+                  "&.Mui-selected": {
+                    backgroundColor: "#f97146", // Cambia el color de fondo cuando está seleccionado
+                  },
+                }}
+              >
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -289,42 +425,124 @@ export default function NavBar(props) {
                     <DescriptionIcon />
                   </ListItemIcon>
                   <ListItemText
-              
-                    primary="Planilla de documentación"
-                    sx={{ opacity: openSideBar ? 1 : 0 , color: "black" }}
+                    primary="Padrón General"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
                   />
                 </ListItemButton>
               </ListItem>
             </Tooltip>
-              <Tooltip title="Impresiones" placement="right">
-                <ListItem component={Link} to="/impresiones" disablePadding sx={{ display: "block" }}>
-                  <ListItemButton
-                
+            <Tooltip title="Padrón Provincial" placement="right">
+              <ListItem
+                selected={location.pathname === "/padron-provincial"}
+                component={Link}
+                to="/padron-provincial"
+                key="reports"
+                disablePadding
+                sx={{
+                  display: "block",
+                  "&.Mui-selected": {
+                    backgroundColor: "#37BBED", // Cambia el color de fondo cuando está seleccionado
+                  },
+                }}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
                     sx={{
-                      minHeight: 48,
-                      justifyContent: openSideBar ? "initial" : "center",
-                      px: 2.5,
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
                     }}
                   >
-                     <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: openSideBar ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <LocalPrintshopIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Impresiones"
-                      sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </Tooltip>
+                    <DescriptionIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Padrón Provincial"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+            <Tooltip title="Impresiones Padrón General" placement="right">
+              <ListItem
+                selected={location.pathname === "/impresiones-general"}
+                component={Link}
+                to="/impresiones-general"
+                disablePadding
+                sx={{
+                  display: "block",
+                  "&.Mui-selected": {
+                    backgroundColor: "#f97146", // Cambia el color de fondo cuando está seleccionado
+                  },
+                }}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <LocalPrintshopIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Impresiones General"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
+            <Tooltip title="Impresiones Padrón Provincial" placement="right">
+              <ListItem
+                selected={location.pathname === "/impresiones-provincial"}
+                component={Link}
+                to="/impresiones-provincial"
+                disablePadding
+                sx={{
+                  display: "block",
+                  "&.Mui-selected": {
+                    backgroundColor: "#37BBED", // Cambia el color de fondo cuando está seleccionado
+                  },
+                }}
+              >
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: openSideBar ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: openSideBar ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <LocalPrintshopIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Impresiones Provincial"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </Tooltip>
             <ListItem key="stadistics" disablePadding sx={{ display: "block" }}>
               <ListItemButton
-                disabled
+                onClick={handleClick}
                 sx={{
                   minHeight: 48,
                   justifyContent: openSideBar ? "initial" : "center",
@@ -341,35 +559,44 @@ export default function NavBar(props) {
                   <AssessmentIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary="Reporte 1"
+                  primary="Reportes"
                   sx={{ opacity: openSideBar ? 1 : 0 }}
                 />
+                {open ? <ExpandLess /> : <ExpandMore />}
               </ListItemButton>
             </ListItem>
-            <ListItem key="incomplete" disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                disabled
-                sx={{
-                  minHeight: 48,
-                  justifyContent: openSideBar ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: openSideBar ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <List disablePadding>
+                <ListItemButton
+                  selected={location.pathname === "/reportes-logistica"}
+                  sx={{ pl: 4 }}
+                  component={Link}
+                  to="/reportes-logistica"
                 >
-                  <TabUnselectedIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Reporte 2"
-                  sx={{ opacity: openSideBar ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
+                  <ListItemIcon>
+                    <BusAlertIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Logística"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                  />
+                </ListItemButton>
+                <ListItemButton
+                  selected={location.pathname === "/reportes-patentes"}
+                  sx={{ pl: 4 }}
+                  component={Link}
+                  to="/reportes-patentes"
+                >
+                  <ListItemIcon>
+                    <DirectionsCarIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary="Patentes"
+                    sx={{ opacity: openSideBar ? 1 : 0, color: "black" }}
+                  />
+                </ListItemButton>
+              </List>
+            </Collapse>
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, pt: 8 }}>

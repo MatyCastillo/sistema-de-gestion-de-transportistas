@@ -28,6 +28,8 @@ import {
   getImagesById,
   uploadImageById,
   getPdf,
+  deleteImageById,
+  filterImgByIdType,
 } from "../services";
 import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
@@ -37,16 +39,20 @@ import CancelIcon from "@mui/icons-material/CancelTwoTone";
 import SaveAsIcon from "@mui/icons-material/SaveAs";
 import {
   Checkbox,
+  Chip,
   CircularProgress,
   FormControlLabel,
   IconButton,
   LinearProgress,
+  Switch,
 } from "@mui/material";
 import ImageForm from "./imageForm";
 import { useEffect } from "react";
 import API from "../utils/const";
 import ImageDialog from "./imgDialog";
 import Loader from "./loader";
+import getImgPath from "../utils/imageHelper";
+import ViewDelete from "./viewDelete";
 
 const theme = createTheme({
   palette: {
@@ -84,7 +90,8 @@ export default function IncriptionForm(props) {
         }
         try {
           setDniTitF(
-            imgs.data.filter((e) => e.img_nombre === "dniTitF").length === 0
+            imgs.data.filter((e) => e.img_nombre === "dniTitF").length === 0 ||
+              !getImgPath("dniTitF", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -95,30 +102,44 @@ export default function IncriptionForm(props) {
                 }
           );
 
-          setDniTitD(
-            imgs.data.filter((e) => e.img_nombre === "dniTitD").length === 0
-              ? { preview: noImg }
-              : {
-                  preview: `${API.imgURI}/${
-                    imgs.data.filter((e) =>
-                      e.img_nombre === "dniTitD" ? e.img_path : ""
-                    )[0].img_path
-                  }`,
-                }
-          );
-          setDniChofF(
-            imgs.data.filter((e) => e.img_nombre === "dniChofF").length === 0
-              ? { preview: noImg }
-              : {
-                  preview: `${API.imgURI}/${
-                    imgs.data.filter((e) =>
-                      e.img_nombre === "dniChofF" ? e.img_path : ""
-                    )[0].img_path
-                  }`,
-                }
-          );
+          try {
+            setDniTitD(
+              imgs.data.filter((e) => e.img_nombre === "dniTitD").length ===
+                0 || !getImgPath("dniTitD", imgs.data)
+                ? { preview: noImg }
+                : {
+                    preview: `${API.imgURI}/${
+                      imgs.data.filter((e) =>
+                        e.img_nombre === "dniTitD" ? e.img_path : ""
+                      )[0].img_path
+                    }`,
+                  }
+            );
+          } catch (error) {
+            console.error("Error al obtener la imagen 'dniTitD'", error);
+            setDniTitD({ preview: noImg });
+          }
+
+          try {
+            setDniChofF(
+              imgs.data.filter((e) => e.img_nombre === "dniChofF").length ===
+                0 || !getImgPath("dniChofF", imgs.data)
+                ? { preview: noImg }
+                : {
+                    preview: `${API.imgURI}/${
+                      imgs.data.filter((e) =>
+                        e.img_nombre === "dniChofF" ? e.img_path : ""
+                      )[0].img_path
+                    }`,
+                  }
+            );
+          } catch (error) {
+            console.error("Error al obtener la imagen 'dniChofF'", error);
+            setDniChofF({ preview: noImg });
+          }
           setDniChofD(
-            imgs.data.filter((e) => e.img_nombre === "dniChofD").length === 0
+            imgs.data.filter((e) => e.img_nombre === "dniChofD").length === 0 ||
+              !getImgPath("dniChofD", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -129,7 +150,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setHab1(
-            imgs.data.filter((e) => e.img_nombre === "hab1").length === 0
+            imgs.data.filter((e) => e.img_nombre === "hab1").length === 0 ||
+              !getImgPath("hab1", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -140,7 +162,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setHab2(
-            imgs.data.filter((e) => e.img_nombre === "hab2").length === 0
+            imgs.data.filter((e) => e.img_nombre === "hab2").length === 0 ||
+              !getImgPath("hab2", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -151,7 +174,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setPol1(
-            imgs.data.filter((e) => e.img_nombre === "pol1").length === 0
+            imgs.data.filter((e) => e.img_nombre === "pol1").length === 0 ||
+              !getImgPath("pol1", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -162,7 +186,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setPol2(
-            imgs.data.filter((e) => e.img_nombre === "pol2").length === 0
+            imgs.data.filter((e) => e.img_nombre === "pol2").length === 0 ||
+              !getImgPath("pol2", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -173,7 +198,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setSeg1(
-            imgs.data.filter((e) => e.img_nombre === "seg1").length === 0
+            imgs.data.filter((e) => e.img_nombre === "seg1").length === 0 ||
+              !getImgPath("seg1", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -184,7 +210,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setSeg2(
-            imgs.data.filter((e) => e.img_nombre === "seg2").length === 0
+            imgs.data.filter((e) => e.img_nombre === "seg2").length === 0 ||
+              !getImgPath("seg2", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -195,7 +222,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setRegTitF(
-            imgs.data.filter((e) => e.img_nombre === "regTitF").length === 0
+            imgs.data.filter((e) => e.img_nombre === "regTitF").length === 0 ||
+              !getImgPath("regTitF", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -206,7 +234,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setRegTitD(
-            imgs.data.filter((e) => e.img_nombre === "regTitD").length === 0
+            imgs.data.filter((e) => e.img_nombre === "regTitD").length === 0 ||
+              !getImgPath("regTitD", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -217,7 +246,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setRegChofF(
-            imgs.data.filter((e) => e.img_nombre === "regChofF").length === 0
+            imgs.data.filter((e) => e.img_nombre === "regChofF").length === 0 ||
+              !getImgPath("regChofF", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -228,7 +258,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setRegChofD(
-            imgs.data.filter((e) => e.img_nombre === "regChofD").length === 0
+            imgs.data.filter((e) => e.img_nombre === "regChofD").length === 0 ||
+              !getImgPath("regChofD", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -239,7 +270,8 @@ export default function IncriptionForm(props) {
                 }
           );
           setVtv(
-            imgs.data.filter((e) => e.img_nombre === "vtv").length === 0
+            imgs.data.filter((e) => e.img_nombre === "vtv").length === 0 ||
+              !getImgPath("vtv", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -251,7 +283,7 @@ export default function IncriptionForm(props) {
           );
           setCedulaVerdeFront(
             imgs.data.filter((e) => e.img_nombre === "cedulaVerdeFront")
-              .length === 0
+              .length === 0 || !getImgPath("cedulaVerdeFront", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -263,7 +295,7 @@ export default function IncriptionForm(props) {
           );
           setCedulaVerdeBack(
             imgs.data.filter((e) => e.img_nombre === "cedulaVerdeBack")
-              .length === 0
+              .length === 0 || !getImgPath("cedulaVerdeBack", imgs.data)
               ? { preview: noImg }
               : {
                   preview: `${API.imgURI}/${
@@ -273,7 +305,33 @@ export default function IncriptionForm(props) {
                   }`,
                 }
           );
-        } catch {}
+          setTitulo(
+            imgs.data.filter((e) => e.img_nombre === "titulo").length === 0 ||
+              !getImgPath("titulo", imgs.data)
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "titulo" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+          setAnexoTitulo(
+            imgs.data.filter((e) => e.img_nombre === "anexoTitulo").length ===
+              0 || !getImgPath("anexoTitulo", imgs.data)
+              ? { preview: noImg }
+              : {
+                  preview: `${API.imgURI}/${
+                    imgs.data.filter((e) =>
+                      e.img_nombre === "anexoTitulo" ? e.img_path : ""
+                    )[0].img_path
+                  }`,
+                }
+          );
+        } catch (error) {
+          console.error(error, "Error al cargar las imagenes");
+        }
         try {
         } catch (error) {}
         if (res) {
@@ -299,6 +357,18 @@ export default function IncriptionForm(props) {
           setVtoHab(parceDateDb(res[0].chofer_vtoHab));
           setVtoVtv(parceDateDb(res[0].chofer_vtoVtv));
           setVtoCupon(parceDateDb(res[0].chofer_cupon));
+
+          setHabilitacion_colonia(
+            res[0].habilitacion_colonia === null
+              ? ""
+              : res[0].habilitacion_colonia
+          );
+          setVtoHabilitacion_colonia(
+            res[0].vtoHabilitacion_colonia === null
+              ? null
+              : parceDateDb(res[0].vtoHabilitacion_colonia)
+          );
+          setSwitchState(res[0].en_padron_prov === 1 ? true : false);
           setVtoProrroga(
             res[0].chofer_prorroga === "0000-00-00" ||
               res[0].chofer_prorroga === null ||
@@ -332,6 +402,7 @@ export default function IncriptionForm(props) {
   const [chofer_nVtv, setChofer_nVtv] = useState("");
   const [chofer_vehiculoCapacidad, setChofer_vehiculoCapacidad] = useState("");
   const [chofer_habilitacion, setChofer_habilitacion] = useState("");
+  const [habilitacion_colonia, setHabilitacion_colonia] = useState("");
 
   const [data, setData] = useState({});
   const [OpenDialog, setOpenDialog] = useState(false);
@@ -343,6 +414,7 @@ export default function IncriptionForm(props) {
   const [vtoHab, setVtoHab] = useState(null);
   const [vtoVtv, setVtoVtv] = useState(null);
   const [vtoCupon, setVtoCupon] = useState(null);
+  const [vtoHabilitacion_colonia, setVtoHabilitacion_colonia] = useState(null);
   const [prorroga, setProrroga] = useState(false);
 
   const [dniTitF, setDniTitF] = useState({ preview: noImg });
@@ -362,17 +434,70 @@ export default function IncriptionForm(props) {
   const [vtv, setVtv] = useState({ preview: noImg });
   const [cedulaVerdeFront, setCedulaVerdeFront] = useState({ preview: noImg });
   const [cedulaVerdeBack, setCedulaVerdeBack] = useState({ preview: noImg });
+  const [titulo, setTitulo] = useState({ preview: noImg });
+  const [anexoTitulo, setAnexoTitulo] = useState({ preview: noImg });
 
   const [viewPreview, setViewPreview] = useState({ state: false });
 
   const [dniTitFPreview, setDniTitFImgPreview] = useState(noImg);
-  const [dniTitDPreview, setDniTitDImgPreview] = useState(noImg);
+  const [deletedImgList, setDeletedImgList] = useState([]);
+
+  const [switchState, setSwitchState] = useState(true);
+  const [showDeletedImages, setShowDeletedImages] = useState(false);
+  const [existDeletedImages, setExistDeletedImages] = useState(false);
+  const [fromViewDelete, setFromViewDelete] = useState({});
+
+  const handleImageSelected = (imgObj) => {
+    // console.log('url', fromViewDelete.type)
+    fromViewDelete.type({
+      preview: `${API.imgURI}/${imgObj}`,
+      restore_url: true,
+      img_nombre: fromViewDelete.img_name,
+      prov_id: prov_asoc,
+      new_url: imgObj,
+    });
+    handleCloseDeleteDialog();
+  };
+
+  useEffect(() => {
+    // Este efecto se ejecuta cada vez que 'fromViewDelete' se actualiza
+    if (fromViewDelete) {
+      console.log(fromViewDelete.img_name);
+    }
+  }, [fromViewDelete]); // El efecto se ejecuta solo cuando 'fromViewDelete' cambia
+
+  const handleOpenDeleteDialog = async (title, tp, img_name) => {
+    setFromViewDelete({ title: title, type: tp, img_name: img_name });
+    try {
+      const deletedImagesStatus = await verImagenesBorradas(
+        prov_asoc,
+        img_name
+      );
+      console.log("lista de eliminados", deletedImagesStatus.archivos);
+      setDeletedImgList(deletedImagesStatus.archivos);
+      setShowDeletedImages(true);
+    } catch (error) {
+      console.error("Error al obtener imágenes borradas:", error);
+      // Aquí puedes manejar el error según sea necesario
+    }
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setShowDeletedImages(false);
+  };
 
   const setearLoading = () => {
     setLoading(true);
     console.log("loading status", loading);
   };
 
+  const handleSwitchChange = (event) => {
+    setSwitchState(event.target.checked);
+  };
+  const cambiarPreview = (tipo, nuevaUrl) => {
+    let nueva = nuevaUrl;
+    tipo({ preview: nueva });
+  };
   const handleDniTitFPreview = (e) => {
     setDniTitF({
       preview: URL.createObjectURL(e.target.files[0]),
@@ -380,6 +505,7 @@ export default function IncriptionForm(props) {
       img_nombre: e.target.name,
       prov_id: document.getElementById("prov_asoc").value,
     });
+    console.log("dniTitF", dniTitF);
   };
   const handleDniTitDPreview = (e) => {
     setDniTitD({
@@ -509,6 +635,23 @@ export default function IncriptionForm(props) {
       prov_id: document.getElementById("prov_asoc").value,
     });
   };
+  const handleTituloPreview = (e) => {
+    setTitulo({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
+  };
+  const handleAnexoTituloPreview = (e) => {
+    setAnexoTitulo({
+      preview: URL.createObjectURL(e.target.files[0]),
+      img: e.target.files[0],
+      img_nombre: e.target.name,
+      prov_id: document.getElementById("prov_asoc").value,
+    });
+  };
+
   const guardarImg = async (data) => {
     try {
       if (data.img_nombre !== undefined) {
@@ -526,7 +669,18 @@ export default function IncriptionForm(props) {
 
   const actualizarImg = async (data) => {
     try {
-      if (data.img_nombre !== undefined) {
+      if (data.restore_url && data.restore_url === true) {
+        const resImg = await deleteImageById(
+          data.img_nombre,
+          data.prov_id,
+          data.new_url
+        );
+        return resImg.status;
+      }
+      if (data.img === "") {
+        const resImg = await deleteImageById(data.img_nombre, data.prov_id);
+        return resImg.status;
+      } else if (data.img_nombre !== undefined) {
         const resImg = await uploadImageById(
           data.img,
           data.img_nombre,
@@ -564,6 +718,17 @@ export default function IncriptionForm(props) {
     const paraPdf = { userId: 132 };
     await getPdf(paraPdf);
   };
+  let parceSwitchState = 1;
+  useEffect(() => {
+    // Actualiza localData en lugar de data
+    // if( switchState === true){
+    //   parceSwitchState = 1
+    // }else if( switchState === false){
+    //   parceSwitchState = 0
+    // }
+    const localData = { ...data, en_padron_prov: switchState };
+    setData(localData);
+  }, [switchState]); // switchState como la dependencia
 
   const handleSubmit = async (event) => {
     let res;
@@ -599,7 +764,9 @@ export default function IncriptionForm(props) {
         await guardarImg(vtv);
         await guardarImg(cedulaVerdeFront);
         await guardarImg(cedulaVerdeBack);
-        console.log(res.data);
+        await guardarImg(titulo);
+        await guardarImg(anexoTitulo);
+
         if (res.data.status === "success") {
           setLoading(false);
           setContentDialog({
@@ -653,6 +820,9 @@ export default function IncriptionForm(props) {
       await actualizarImg(vtv);
       await actualizarImg(cedulaVerdeFront);
       await actualizarImg(cedulaVerdeBack);
+      await actualizarImg(titulo);
+      await actualizarImg(anexoTitulo);
+
       res = await updateProv(data, props.id);
       if (res.data.status === "success") {
         setLoading(false);
@@ -723,7 +893,32 @@ export default function IncriptionForm(props) {
       chofer_cuitSocio: chofer_cuitTitular,
     });
   }
-  console.log(data);
+
+  const deleteImage = (imageSetter, imageId) => {
+    if (userType === "administrador") {
+      imageSetter({
+        preview: noImg,
+        img: "",
+        img_nombre: imageId,
+        prov_id: document.getElementById("prov_asoc").value,
+        restore_url: false,
+      });
+    }
+  };
+
+  const verImagenesBorradas = async (id, tipo) => {
+    try {
+      if (tipo !== undefined) {
+        const resImg = await filterImgByIdType(id, tipo);
+        console.log("id y tipo ", id, tipo);
+        console.log("res", resImg);
+        return resImg;
+      }
+    } catch (error) {
+      return error;
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
       {/* {loading && (
@@ -736,6 +931,16 @@ export default function IncriptionForm(props) {
           open={viewPreview.state}
           close={handeClickClosePreview}
         ></ImageDialog>
+
+        <ViewDelete
+          list={deletedImgList}
+          key={fromViewDelete.type}
+          open={showDeletedImages}
+          close={handleCloseDeleteDialog}
+          title={fromViewDelete.title}
+          userId={prov_asoc}
+          onSelectImage={handleImageSelected}
+        />
         <AlertDialog
           open={OpenDialog}
           close={handleCloseDialog}
@@ -844,6 +1049,23 @@ export default function IncriptionForm(props) {
                     disabled: userType === "administrador" ? false : true,
                   }}
                 />
+                <Stack direction="row" spacing={2} mt={3} alignItems="center">
+                  <Typography component="h3" variant="h6">
+                    En Padrón Provincial:
+                  </Typography>
+                  <Chip label="NO" variant="outlined" />
+                  <FormControlLabel
+                    id="en_padron_prov"
+                    required
+                    control={
+                      <Switch
+                        checked={switchState}
+                        onChange={handleSwitchChange}
+                      />
+                    }
+                  />
+                  <Chip label="SI" variant="outlined" />
+                </Stack>
               </Grid>
               <Grid item xs={12} lg={6}>
                 <Box
@@ -1107,6 +1329,58 @@ export default function IncriptionForm(props) {
                   />
                 </LocalizationProvider>
               </Grid>
+              {/* Colonia */}
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="standard"
+                  onChange={(e) =>
+                    handleInputChange(e, setHabilitacion_colonia)
+                  }
+                  required
+                  fullWidth
+                  id="habilitacion_colonia"
+                  name="habilitacion_colonia"
+                  value={habilitacion_colonia}
+                  label=" Nº habilitación municipal Colonia"
+                  inputProps={{
+                    disabled: userType === "administrador" ? false : true,
+                  }}
+                  // autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <LocalizationProvider
+                  dateAdapter={AdapterDateFns}
+                  adapterLocale={esLocale}
+                >
+                  <DatePicker
+                    inputProps={{
+                      disabled: userType === "administrador" ? false : true,
+                    }}
+                    variant="inline"
+                    label="Vto habilitación Colonia(*)"
+                    value={vtoHabilitacion_colonia}
+                    onChange={(date) =>
+                      dateOnChange(
+                        date,
+                        setVtoHabilitacion_colonia,
+                        "vtoHabilitacion_colonia"
+                      )
+                    }
+                    InputAdornmentProps={{ position: "start" }}
+                    renderInput={(params) => (
+                      <TextField
+                        placeholder="DD/MM/AAAA"
+                        size="small"
+                        fullWidth
+                        variant="standard"
+                        {...params}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              </Grid>
+              {/* Colonia */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   variant="standard"
@@ -1247,6 +1521,10 @@ export default function IncriptionForm(props) {
               <Typography component="h3" variant="h6">
                 Carga de imagenes
               </Typography>
+              <Typography variant="caption" display="block" gutterBottom>
+                En caso de que el titular del vehículo y el chofer sean la misma
+                persona, solo es necesario subir la documentación del chofer.
+              </Typography>
               <Grid
                 container
                 direction="row"
@@ -1256,15 +1534,16 @@ export default function IncriptionForm(props) {
                 sx={{ mt: 1 }}
               >
                 {/*<ImageForm title="Nuevo" />*/}
-                <Grid>
+                <Box width={100} alignItems="center" mr={2}>
                   {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setDniTitF({ preview: noImg })
-                        : ""
+                    onClick={
+                      () => deleteImage(setDniTitF, "dniTitF")
+                      // userType === "administrador"
+                      //   ? setDniTitF({ preview: noImg })
+                      //   : ""
                     }
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
@@ -1288,7 +1567,7 @@ export default function IncriptionForm(props) {
                       sx={{
                         m: 2,
                         mt: -1,
-                        maxWidth: "100px",
+                        minWidth: "100px",
                         textAlign: "center",
                       }}
                       component="label"
@@ -1320,16 +1599,32 @@ export default function IncriptionForm(props) {
                       DNI Titular Frente
                     </Button>
                   )}
-                </Grid>
-                <Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog(
+                        "DNI Titular Frente",
+                        setDniTitF,
+                        "dniTitF"
+                      )
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
+                <Box width={100} alignItems="center" mr={2}>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setDniTitD({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setDniTitD, "dniTitD")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1352,7 +1647,7 @@ export default function IncriptionForm(props) {
                       sx={{
                         m: 2,
                         mt: -1,
-                        maxWidth: "100px",
+                        minWidth: "100px",
                         textAlign: "center",
                       }}
                       component="label"
@@ -1374,7 +1669,7 @@ export default function IncriptionForm(props) {
                       sx={{
                         m: 2,
                         mt: -1,
-                        maxWidth: "100px",
+                        minWidth: "100px",
                         textAlign: "center",
                         cursor: "context-menu",
                       }}
@@ -1384,17 +1679,33 @@ export default function IncriptionForm(props) {
                       DNI Titular Dorso
                     </Button>
                   )}
-                </Grid>
-                <Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog(
+                        "DNI Titular Dorso",
+                        setDniTitD,
+                        "dniTitD"
+                      )
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
+                <Box width={100} alignItems="center" mr={2}>
                   {/*<img id="dniFront" src={imgPreview} style={{width: 56, height: 56}}/>*/}
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setDniChofF({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setDniChofF, "dniChofF")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1449,16 +1760,32 @@ export default function IncriptionForm(props) {
                       DNI Chofer Frente
                     </Button>
                   )}
-                </Grid>
-                <Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog(
+                        "DNI Chofer Frente",
+                        setDniChofF,
+                        "dniChofF"
+                      )
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
+                <Box width={100} alignItems="center" mr={2}>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setDniChofD({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setDniChofD, "dniChofD")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1514,17 +1841,33 @@ export default function IncriptionForm(props) {
                       DNI Chofer Dorso
                     </Button>
                   )}
-                </Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog(
+                        "DNI Chofer Dorso",
+                        setDniChofD,
+                        "dniChofD"
+                      )
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
                 {/**Inicio habilitacion foto 1 */}
-                <Grid>
+                <Box width={100} alignItems="center" mr={2}>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setHab1({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setHab1, "hab1")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1579,18 +1922,34 @@ export default function IncriptionForm(props) {
                       Habilitacion 1
                     </Button>
                   )}
-                </Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog(
+                        "Habilitación foto 1",
+                        setHab1,
+                        "hab1"
+                      )
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
                 {/**Fin habilitacion foto 1 */}
                 {/**Inicio habilitacion foto 2 */}
-                <Grid>
+                <Box width={100} alignItems="center" mr={2}>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setHab2({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setHab2, "hab2")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1645,18 +2004,30 @@ export default function IncriptionForm(props) {
                       Habilitacion 2
                     </Button>
                   )}
-                </Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog("Habilitacion 2", setHab2, "hab2")
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
                 {/**Fin habilitacion foto 2 */}
                 {/**Inicio poliza foto 1 */}
-                <Grid>
+                <Box width={100} alignItems="center" mr={2}>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setPol1({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setPol1, "pol1")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1711,18 +2082,30 @@ export default function IncriptionForm(props) {
                       Poliza 1
                     </Button>
                   )}
-                </Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog("Poliza foto 1", setPol1, "pol1")
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
                 {/**Fin poliza foto 1 */}
                 {/**Inicio poliza foto 2 */}
-                <Grid>
+                <Box width={100} alignItems="center" mr={2}>
                   <IconButton
                     aria-label="clearImg"
                     color="error"
-                    onClick={() =>
-                      userType === "administrador"
-                        ? setPol2({ preview: noImg })
-                        : ""
-                    }
+                    onClick={() => deleteImage(setPol2, "pol2")}
                     sx={{ zIndex: "tooltip", ml: 1 }}
                   >
                     <Tooltip title="Eliminar imagen">
@@ -1777,7 +2160,23 @@ export default function IncriptionForm(props) {
                       Poliza 2
                     </Button>
                   )}
-                </Grid>
+                  <Button
+                    onClick={() =>
+                      handleOpenDeleteDialog("Poliza foto 2", setPol2, "pol2")
+                    }
+                    disabled={props.id ? false : true}
+                    color="error"
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    variant="outlined"
+                  >
+                    Eliminadas
+                  </Button>
+                </Box>
                 {/**Fin poliza foto 2 */}
               </Grid>
             </Grid>
@@ -1789,15 +2188,11 @@ export default function IncriptionForm(props) {
               spacing={1}
             >
               {/**Inicio seguro foto 1 */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setSeg1({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setSeg1, "seg1")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1852,18 +2247,30 @@ export default function IncriptionForm(props) {
                     Seguro 1
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog("Seguro Hoja 1", setSeg1, "seg1")
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin seguro foto 1 */}
               {/**Inicio seguro foto 2 */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setSeg2({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setSeg2, "seg2")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1918,18 +2325,30 @@ export default function IncriptionForm(props) {
                     seguro 2
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog("Seguro Hoja 2", setSeg2, "seg2")
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin seguro foto 2 */}
               {/**Inicio registro titular foto 1 */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setRegTitF({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setRegTitF, "regTitF")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -1984,18 +2403,34 @@ export default function IncriptionForm(props) {
                     registro titular frente
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Registro titular frente",
+                      setRegTitF,
+                      "regTitF"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin registro titular foto 1 */}
               {/**Inicio registro titular foto 2 */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setRegTitD({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setRegTitD, "regTitD")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -2050,18 +2485,34 @@ export default function IncriptionForm(props) {
                     registro titular dorso
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Registro titular dorso",
+                      setRegTitD,
+                      "regTitD"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin registro titular foto 2 */}
               {/**Inicio registro chofer foto 1 */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setRegChofF({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setRegChofF, "regChofF")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -2116,18 +2567,34 @@ export default function IncriptionForm(props) {
                     registro chofer frente
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Registro chofer frente",
+                      setRegChofF,
+                      "regChofF"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin registro chofer foto 1 */}
               {/**Inicio registro chofer foto 2 */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setRegChofD({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setRegChofD, "regChofD")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -2182,18 +2649,34 @@ export default function IncriptionForm(props) {
                     registro chofer Dorso
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Registro chofer Dorso",
+                      setRegChofD,
+                      "regChofD"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin registro chofer foto 2 */}
               {/**Inicio foto vtv */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
-                  onClick={() =>
-                    userType === "administrador"
-                      ? setVtv({ preview: noImg })
-                      : ""
-                  }
+                  onClick={() => deleteImage(setVtv, "vtv")}
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
                   <Tooltip title="Eliminar imagen">
@@ -2249,17 +2732,31 @@ export default function IncriptionForm(props) {
                     informe vtv
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog("Informe VTV", setVtv, "vtv")
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin registro foto vtv */}
               {/**Inicio foto cedula verde frente */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2}>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
                   onClick={() =>
-                    userType === "administrador"
-                      ? setCedulaVerdeFront({ preview: noImg })
-                      : ""
+                    deleteImage(setCedulaVerdeFront, "cedulaVerdeFront")
                   }
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
@@ -2316,17 +2813,35 @@ export default function IncriptionForm(props) {
                     cedula verde frente
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Cedula verde frente",
+                      setCedulaVerdeFront,
+                      "cedulaVerdeFront"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin Inicio foto cedula verde frente */}
               {/**Inicio foto cedula verde dorso */}
-              <Grid>
+              <Box width={100} alignItems="center" mr={2} id>
                 <IconButton
                   aria-label="clearImg"
                   color="error"
                   onClick={() =>
-                    userType === "administrador"
-                      ? setCedulaVerdeBack({ preview: noImg })
-                      : ""
+                    deleteImage(setCedulaVerdeBack, "cedulaVerdeBack")
                   }
                   sx={{ zIndex: "tooltip", ml: 1 }}
                 >
@@ -2383,8 +2898,190 @@ export default function IncriptionForm(props) {
                     cedula verde dorso
                   </Button>
                 )}
-              </Grid>
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Cedula verde dorso",
+                      setCedulaVerdeBack,
+                      "cedulaVerdeBack"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
               {/**Fin Inicio foto cedula verde dorso */}
+              {/**Inicio foto titulo */}
+              <Box width={100} alignItems="center" mr={2}>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => deleteImage(setTitulo, "titulo")}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  onClick={handeClickOpenPreview}
+                  variant="rounded"
+                  id="titulo"
+                  name="titulo"
+                  alt="no-photo"
+                  src={titulo.preview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
+                ></Avatar>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    titulo
+                    <input
+                      hidden
+                      id="titulo"
+                      name="titulo"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleTituloPreview} //para cambiar
+                    />
+                  </Button>
+                ) : (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    titulo
+                  </Button>
+                )}
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog("Titulo", setTitulo, "titulo")
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
+              {/**Fin Inicio foto Titulo */}
+              {/**Inicio foto cedula Anexio Titulo */}
+              <Box width={100} alignItems="center" mr={2}>
+                <IconButton
+                  aria-label="clearImg"
+                  color="error"
+                  onClick={() => deleteImage(setAnexoTitulo, "anexoTitulo")}
+                  sx={{ zIndex: "tooltip", ml: 1 }}
+                >
+                  <Tooltip title="Eliminar imagen">
+                    <CancelIcon />
+                  </Tooltip>
+                </IconButton>
+                <Avatar
+                  onClick={handeClickOpenPreview}
+                  variant="rounded"
+                  id="anexoTitulo"
+                  name="anexoTitulo"
+                  alt="no-photo"
+                  src={anexoTitulo.preview}
+                  sx={{ width: 100, height: 100, m: 2, mt: -4 }}
+                  style={{
+                    border: "0.1px solid  #E7441060",
+                  }}
+                ></Avatar>
+                {userType === "administrador" ? (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                    }}
+                    component="label"
+                    variant="outlined"
+                  >
+                    anexo titulo
+                    <input
+                      hidden
+                      id="anexoTitulo"
+                      name="anexoTitulo"
+                      accept="image/*"
+                      multiple
+                      type="file"
+                      onChange={handleAnexoTituloPreview}
+                    />
+                  </Button>
+                ) : (
+                  <Button
+                    sx={{
+                      m: 2,
+                      mt: -1,
+                      maxWidth: "100px",
+                      textAlign: "center",
+                      cursor: "context-menu",
+                    }}
+                    component="label"
+                    variant="text"
+                  >
+                    anexo titulo
+                  </Button>
+                )}
+                <Button
+                  onClick={() =>
+                    handleOpenDeleteDialog(
+                      "Anexo titulo",
+                      setAnexoTitulo,
+                      "anexoTitulo"
+                    )
+                  }
+                  disabled={props.id ? false : true}
+                  color="error"
+                  sx={{
+                    m: 2,
+                    mt: -1,
+                    maxWidth: "100px",
+                    textAlign: "center",
+                  }}
+                  variant="outlined"
+                >
+                  Eliminadas
+                </Button>
+              </Box>
+              {/**Fin Inicio foto Anexo titulo */}
             </Grid>
             {userType === "administrador" ? (
               <Grid container justifyContent="flex-end">

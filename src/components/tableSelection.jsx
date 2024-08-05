@@ -22,6 +22,10 @@ import {
   Typography,
 } from "@mui/material";
 import { getAllProv, getPdf, getDeleteProvs, markAsDeleted } from "../services";
+import {
+  getAllProv as getAllProv_provincial,
+  getPdf as getPdf_provincial,
+} from "../services/provincial";
 import { deepOrange } from "@mui/material/colors";
 import { esES as coreEsES } from "@mui/material/locale";
 import EditIcon from "@mui/icons-material/Edit";
@@ -120,7 +124,7 @@ function createData(
   };
 }
 
-export default function DataTable() {
+export default function DataTable(props) {
   let navigate = useNavigate();
   var hoy = startOfToday();
   var userType = sessionStorage.getItem("userType");
@@ -171,9 +175,15 @@ export default function DataTable() {
   useEffect(() => {
     (async () => {
       let res;
-      res = await getAllProv();
+      if (props.print === "impresion_provincial") {
+        res = await getAllProv_provincial();
+      } else {
+        res = await getAllProv();
+      }
       if (res && userType !== null) {
-        setRows(res.filter((item) => item.expire !== "Expired"));
+        if (props.type !== "logistic") {
+          setRows(res);
+        }
       }
     })(setLoading(false));
   }, []);
@@ -189,7 +199,11 @@ export default function DataTable() {
     let res;
     handleClickOpenModal();
     arr.forEach(async (element) => {
-      res = await getPdf(element);
+      if (props.print === "impresion_provincial") {
+        res = await getPdf_provincial(element);
+      } else {
+        res = await getPdf(element);
+      }
     });
     return res;
   };
@@ -450,6 +464,28 @@ export default function DataTable() {
         m: 2,
         mt: -2,
         height: 650,
+        "& .super-app-theme--NotExpired": {
+          bgcolor: (theme) =>
+            getBackgroundColor(theme.palette.success.main, theme.palette.mode),
+          "&:hover": {
+            bgcolor: (theme) =>
+              getHoverBackgroundColor(
+                theme.palette.success.main,
+                theme.palette.mode
+              ),
+          },
+        },
+        "& .super-app-theme--Expired": {
+          bgcolor: (theme) =>
+            getBackgroundColor(theme.palette.error.main, theme.palette.mode),
+          "&:hover": {
+            bgcolor: (theme) =>
+              getHoverBackgroundColor(
+                theme.palette.error.main,
+                theme.palette.mode
+              ),
+          },
+        },
       }}
     >
       <ThemeProvider theme={theme}>
@@ -463,9 +499,6 @@ export default function DataTable() {
                 // Hide columns status and traderName, the other columns will remain visible
                 id: false,
               },
-            },
-            sorting: {
-              sortModel: [{ field: "id", sort: "desc" }],
             },
           }}
           rows={!deletedPart ? rows : rows2}
